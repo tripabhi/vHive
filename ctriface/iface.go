@@ -336,7 +336,12 @@ func imageIsOutdated(cachedImage containerd.Image, imageUrl string) bool {
 
 func remoteImageDigest(imageUrl string) (string, error) {
 	cmd := fmt.Sprintf("skopeo inspect docker://%s | jq -r '.Digest'", imageUrl)
+
+	start := time.Now()
 	out, err := exec.Command("bash", "-c", cmd).Output()
+	elapsed := time.Since(start)
+	log.Printf("Remote digest fetching took %s", elapsed)
+
 	return string(out), err
 }
 
