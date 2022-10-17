@@ -31,13 +31,27 @@ import (
 )
 
 // VM type
+// type VM struct {
+// 	ID        string
+// 	Image     *containerd.Image
+// 	Container *containerd.Container
+// 	Task      *containerd.Task
+// 	TaskCh    <-chan containerd.ExitStatus
+// 	Ni        *taps.NetworkInterface
+// }
+
 type VM struct {
-	ID        string
-	Image     *containerd.Image
-	Container *containerd.Container
-	Task      *containerd.Task
-	TaskCh    <-chan containerd.ExitStatus
-	Ni        *taps.NetworkInterface
+	ID               string
+	// ContainerSnapKey string
+	// SnapBooted       bool
+	Image            *containerd.Image
+	Container        *containerd.Container
+	Task             *containerd.Task
+	TaskCh           <-chan containerd.ExitStatus
+	VCPUCount        uint32
+	MemSizeMib       uint32
+	// netConfig        *networking.NetworkConfig
+	Ni               *taps.NetworkInterface
 }
 
 // VMPool Pool of active VMs (can be in several states though)

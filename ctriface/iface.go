@@ -63,14 +63,16 @@ import (
 type StartVMResponse struct {
 	// GuestIP is the IP of the guest MicroVM
 	GuestIP string
+	FCPid string
 }
 
 const (
-	testImageName = "ghcr.io/ease-lab/helloworld:var_workload"
+	testImageName = "ghcr.io/ease-lab/pyaes:var_workload"
+	testImageNamePyaes = "ghcr.io/ease-lab/pyaes:var_workload"
 )
 
 // StartVM Boots a VM if it does not exist
-func (o *Orchestrator) StartVM(ctx context.Context, vmID, imageName string) (_ *StartVMResponse, _ *metrics.Metric, retErr error) {
+func (o *Orchestrator) StartVM(ctx context.Context, vmID, imageName string, vmSize, vCPUCount uint32) (response *StartVMResponse, _ *metrics.Metric, retErr error) {
 	var (
 		startVMMetric *metrics.Metric = metrics.NewMetric()
 		tStart        time.Time
@@ -84,6 +86,8 @@ func (o *Orchestrator) StartVM(ctx context.Context, vmID, imageName string) (_ *
 		logger.Error("failed to allocate VM in VM pool")
 		return nil, nil, err
 	}
+	vm.VCPUCount = vCPUCount
+	vm.MemSizeMib = vmSize
 
 	defer func() {
 		// Free the VM from the pool if function returns error
@@ -95,12 +99,13 @@ func (o *Orchestrator) StartVM(ctx context.Context, vmID, imageName string) (_ *
 	}()
 
 	ctx = namespaces.WithNamespace(ctx, namespaceName)
-	tStart = time.Now()
+	// tStart = time.Now()
 	if vm.Image, err = o.getImage(ctx, imageName); err != nil {
 		return nil, nil, errors.Wrapf(err, "Failed to get/pull image")
 	}
-	startVMMetric.MetricMap[metrics.GetImage] = metrics.ToUS(time.Since(tStart))
+	// startVMMetric.MetricMap[metrics.GetImage] = metrics.ToUS(time.Since(tStart))
 
+	log.Info("FcCreateVM for vmid: ", vmID)
 	tStart = time.Now()
 	conf := o.getVMConfig(vm)
 	resp, err := o.fcClient.CreateVM(ctx, conf)
@@ -108,6 +113,8 @@ func (o *Orchestrator) StartVM(ctx context.Context, vmID, imageName string) (_ *
 	if err != nil {
 		return nil, nil, errors.Wrap(err, "failed to create the microVM in firecracker-containerd")
 	}
+	FCPid := resp.GetFirecrackerPID()
+	response = &StartVMResponse{GuestIP: vm.Ni.PrimaryAddress, FCPid: FCPid}
 
 	defer func() {
 		if retErr != nil {
@@ -117,7 +124,7 @@ func (o *Orchestrator) StartVM(ctx context.Context, vmID, imageName string) (_ *
 		}
 	}()
 
-	logger.Debug("StartVM: Creating a new container")
+	log.Info("NewContainer for vmid: ", vmID)
 	tStart = time.Now()
 	container, err := o.client.NewContainer(
 		ctx,
@@ -147,7 +154,8 @@ func (o *Orchestrator) StartVM(ctx context.Context, vmID, imageName string) (_ *
 
 	iologger := NewWorkloadIoWriter(vmID)
 	o.workloadIo.Store(vmID, &iologger)
-	logger.Debug("StartVM: Creating a new task")
+	// logger.Debug("StartVM: Creating a new task")
+	log.Info("NewTask for vmid: ", vmID)
 	tStart = time.Now()
 	task, err := container.NewTask(ctx, cio.NewCreator(cio.WithStreams(os.Stdin, iologger, iologger)))
 	startVMMetric.MetricMap[metrics.NewTask] = metrics.ToUS(time.Since(tStart))
@@ -164,7 +172,8 @@ func (o *Orchestrator) StartVM(ctx context.Context, vmID, imageName string) (_ *
 		}
 	}()
 
-	logger.Debug("StartVM: Waiting for the task to get ready")
+	// logger.Debug("StartVM: Waiting for the task to get ready")
+	log.Info("TaskWait for vmid: ", vmID)
 	tStart = time.Now()
 	ch, err := task.Wait(ctx)
 	startVMMetric.MetricMap[metrics.TaskWait] = metrics.ToUS(time.Since(tStart))
@@ -181,7 +190,8 @@ func (o *Orchestrator) StartVM(ctx context.Context, vmID, imageName string) (_ *
 		}
 	}()
 
-	logger.Debug("StartVM: Starting the task")
+	// logger.Debug("StartVM: Starting the task")
+	log.Info("TaskStart for vmid: ", vmID)
 	tStart = time.Now()
 	if err := task.Start(ctx); err != nil {
 		return nil, nil, errors.Wrap(err, "failed to start a task")
@@ -201,6 +211,7 @@ func (o *Orchestrator) StartVM(ctx context.Context, vmID, imageName string) (_ *
 		return nil, nil, err
 	}
 	if o.GetUPFEnabled() {
+		log.Info("UPF enabled!!!")
 		logger.Debug("Registering VM with the memory manager")
 
 		stateCfg := manager.SnapshotStateCfg{
@@ -221,7 +232,8 @@ func (o *Orchestrator) StartVM(ctx context.Context, vmID, imageName string) (_ *
 
 	logger.Debug("Successfully started a VM")
 
-	return &StartVMResponse{GuestIP: vm.Ni.PrimaryAddress}, startVMMetric, nil
+	// return &StartVMResponse{GuestIP: vm.Ni.PrimaryAddress}, startVMMetric, nil
+	return response, startVMMetric, nil
 }
 
 // StopSingleVM Shuts down a VM
@@ -350,6 +362,24 @@ func (o *Orchestrator) getImage(ctx context.Context, imageName string) (*contain
 	return &image, nil
 }
 
+// func getK8sDNS() []string {
+// 	//using googleDNS as a backup
+// 	dnsIPs := []string{"8.8.8.8"}
+// 	//get k8s DNS clusterIP
+// 	cmd := exec.Command(
+// 		"kubectl", "get", "service", "-n", "kube-system", "kube-dns", "-o=custom-columns=:.spec.clusterIP", "--no-headers",
+// 	)
+// 	stdoutStderr, err := cmd.CombinedOutput()
+// 	if err != nil {
+// 		log.Warnf("Failed to Fetch k8s dns clusterIP %v\n%s\n", err, stdoutStderr)
+// 		log.Warnf("Using google dns %s\n", dnsIPs[0])
+// 	} else {
+// 		//adding k8s DNS clusterIP to the list
+// 		dnsIPs = []string{strings.TrimSpace(string(stdoutStderr)), dnsIPs[0]}
+// 	}
+// 	return dnsIPs
+// }
+
 func getK8sDNS() []string {
 	//using googleDNS as a backup
 	dnsIPs := []string{"8.8.8.8"}
@@ -359,8 +389,8 @@ func getK8sDNS() []string {
 	)
 	stdoutStderr, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Warnf("Failed to Fetch k8s dns clusterIP %v\n%s\n", err, stdoutStderr)
-		log.Warnf("Using google dns %s\n", dnsIPs[0])
+		// log.Warnf("Failed to Fetch k8s dns clusterIP %v\n%s\n", err, stdoutStderr)
+		// log.Warnf("Using google dns %s\n", dnsIPs[0])
 	} else {
 		//adding k8s DNS clusterIP to the list
 		dnsIPs = []string{strings.TrimSpace(string(stdoutStderr)), dnsIPs[0]}
@@ -376,8 +406,8 @@ func (o *Orchestrator) getVMConfig(vm *misc.VM) *proto.CreateVMRequest {
 		TimeoutSeconds: 100,
 		KernelArgs:     kernelArgs,
 		MachineCfg: &proto.FirecrackerMachineConfiguration{
-			VcpuCount:  1,
-			MemSizeMib: 256,
+			VcpuCount:  vm.VCPUCount,
+			MemSizeMib: vm.MemSizeMib,
 		},
 		NetworkInterfaces: []*proto.FirecrackerNetworkInterface{{
 			StaticConfig: &proto.StaticNetworkConfiguration{
@@ -463,6 +493,9 @@ func (o *Orchestrator) CreateSnapshot(ctx context.Context, vmID string) error {
 	logger.Debug("Orchestrator received CreateSnapshot")
 
 	ctx = namespaces.WithNamespace(ctx, namespaceName)
+	clientDeadline := time.Now().Add(10000 * time.Second)
+	ctxFwd, cancel := context.WithDeadline(ctx, clientDeadline)
+	defer cancel()
 
 	req := &proto.CreateSnapshotRequest{
 		VMID:             vmID,
@@ -470,9 +503,45 @@ func (o *Orchestrator) CreateSnapshot(ctx context.Context, vmID string) error {
 		MemFilePath:      o.getMemoryFile(vmID),
 	}
 
-	if _, err := o.fcClient.CreateSnapshot(ctx, req); err != nil {
+	if _, err := o.fcClient.CreateSnapshot(ctx, req); err != nil && ctxFwd.Err() == context.Canceled{
 		logger.WithError(err).Error("failed to create snapshot of the VM")
 		return err
+	}
+
+	return nil
+}
+
+func (o *Orchestrator) InfiniteCreateSnapshot(quit chan bool, ctx context.Context, vmID string) error {
+	logger := log.WithFields(log.Fields{"vmID": vmID})
+	logger.Debug("Orchestrator received CreateSnapshot")
+
+	ctx = namespaces.WithNamespace(ctx, namespaceName)
+	clientDeadline := time.Now().Add(10000 * time.Second)
+	ctxFwd, cancel := context.WithDeadline(ctx, clientDeadline)
+	defer cancel()
+
+	req := &proto.CreateSnapshotRequest{
+		VMID:             vmID,
+		SnapshotFilePath: o.getSnapshotFile(vmID),
+		MemFilePath:      o.getMemoryFile(vmID),
+	}
+
+	// log.Info("start for loop...")
+	for {
+		// log.Info("enter a new loop for: ", vmID)
+		select {
+		case <- quit:
+			log.Info("quiting")
+			break
+		default:
+			// log.Info("CSS infinitely for vmID: ", vmID)
+			if _, err := o.fcClient.CreateSnapshot(ctx, req); err != nil && ctxFwd.Err() == context.Canceled{
+				logger.WithError(err).Error("failed to create snapshot of the VM")
+				return err
+			}
+			// log.Info("CSS finish for vmID: ", vmID)
+		}
+		//sleep? -> CSS is sleeping
 	}
 
 	return nil

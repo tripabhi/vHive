@@ -154,6 +154,7 @@ func (o *Orchestrator) setupCloseHandler() {
 // Cleans up snapshots directory
 func (o *Orchestrator) Cleanup() {
 	o.vmPool.RemoveBridges()
+	log.Info("Remove bridges done!")
 	if err := os.RemoveAll(o.snapshotsDir); err != nil {
 		log.Panic("failed to delete snapshots dir", err)
 	}

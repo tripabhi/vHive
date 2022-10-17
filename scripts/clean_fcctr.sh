@@ -61,6 +61,8 @@ else
     echo Removing devmapper devices
     for de in `sudo dmsetup ls| cut -f1|grep thinpool`; do sudo dmsetup remove $de && echo Removed $de; done
     sudo dmsetup remove fc-dev-thinpool
+    sudo losetup --detach /dev/loop5
+    sudo losetup --detach /dev/loop6
 fi
 
 
@@ -76,6 +78,8 @@ sudo rm -rf /run/firecracker-containerd/containerd.sock.ttrpc \
 echo Cleaning CNI state, e.g., allocated addresses
 sudo rm /var/lib/cni/networks/fcnet*/last_reserved_ip.0 || echo clean already
 sudo rm /var/lib/cni/networks/fcnet*/19* || echo clean already
+
+sudo rm -rf /fccd/snapshots/* 
 
 echo Creating a fresh devmapper
 source $DIR/create_devmapper.sh

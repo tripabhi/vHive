@@ -21,12 +21,20 @@
 # SOFTWARE.
 
 EXTRAGOARGS:=-v -race -cover
-EXTRATESTFILES:=iface_test.go iface.go orch_options.go orch.go
+EXTRATESTFILES:=iface_test.go iface.go orch_options.go orch.go types.go
 BENCHFILES:=bench_test.go iface.go orch_options.go orch.go
 WITHUPF:=-upf
 WITHLAZY:=-lazy
 GOBENCH:=-v -timeout 1500s
 CTRDLOGDIR:=/tmp/ctrd-logs
+
+writeBW:=99999
+isVmTouch:=false
+parallelNum:=1
+interferNum:=1
+dumpMetrics:=true
+useNVMe:=false
+sameCtImg:=false
 
 test:
 	./../scripts/clean_fcctr.sh
@@ -36,15 +44,17 @@ test:
 	./../scripts/clean_fcctr.sh
 
 test-man:
-	sudo mkdir -m777 -p $(CTRDLOGDIR) && sudo env "PATH=$(PATH)" /usr/local/bin/firecracker-containerd --config /etc/firecracker-containerd/config.toml 1>$(CTRDLOGDIR)/ctriface_log_noupf_man_travis.out 2>$(CTRDLOGDIR)/ctriface_log_noupf_man_travis.err &
-	sudo env "PATH=$(PATH)" go test $(EXTRAGOARGS) -run TestSnapLoad
+	sudo ./clear_cache.sh
 	./../scripts/clean_fcctr.sh
+	# sudo mkdir -m777 -p $(CTRDLOGDIR) && sudo env "PATH=$(PATH)" /usr/local/bin/firecracker-containerd --config /etc/firecracker-containerd/config.toml 1>$(CTRDLOGDIR)/ctriface_log_noupf_man_travis.out 2>$(CTRDLOGDIR)/ctriface_log_noupf_man_travis.err &
+	# sudo env "PATH=$(PATH)" go test $(EXTRAGOARGS) -run TestSnapLoadOnlyOne
+	# ./../scripts/clean_fcctr.sh
 	sudo mkdir -m777 -p $(CTRDLOGDIR) && sudo env "PATH=$(PATH)" /usr/local/bin/firecracker-containerd --config /etc/firecracker-containerd/config.toml 1>$(CTRDLOGDIR)/ctriface_log_upf_man_travis.out 2>$(CTRDLOGDIR)/ctriface_log_upf_man_travis.err &
-	sudo env "PATH=$(PATH)" go test $(EXTRAGOARGS) -run TestSnapLoad -args $(WITHUPF)
-	./../scripts/clean_fcctr.sh
-	sudo mkdir -m777 -p $(CTRDLOGDIR) && sudo env "PATH=$(PATH)" /usr/local/bin/firecracker-containerd --config /etc/firecracker-containerd/config.toml 1>$(CTRDLOGDIR)/ctriface_log_lazy_man_travis.out 2>$(CTRDLOGDIR)/ctriface_log_lazy_man_travis.err &
-	sudo env "PATH=$(PATH)" go test $(EXTRAGOARGS) -run TestSnapLoad -args $(WITHUPF) $(WITHLAZY)
-	./../scripts/clean_fcctr.sh
+	sudo env "PATH=$(PATH)" go test $(EXTRAGOARGS) -run TestSnapLoadOnlyOne -args $(WITHUPF) 
+	# ./../scripts/clean_fcctr.sh
+	# sudo mkdir -m777 -p $(CTRDLOGDIR) && sudo env "PATH=$(PATH)" /usr/local/bin/firecracker-containerd --config /etc/firecracker-containerd/config.toml 1>$(CTRDLOGDIR)/ctriface_log_lazy_man_travis.out 2>$(CTRDLOGDIR)/ctriface_log_lazy_man_travis.err &
+	# sudo env "PATH=$(PATH)" go test $(EXTRAGOARGS) -run TestSnapLoadOnlyOne -args $(WITHUPF) $(WITHLAZY)
+	# ./../scripts/clean_fcctr.sh
 
 test-skip:
 	sudo mkdir -m777 -p $(CTRDLOGDIR) && sudo env "PATH=$(PATH)" /usr/local/bin/firecracker-containerd --config /etc/firecracker-containerd/config.toml 1>$(CTRDLOGDIR)/ctriface_log_noupf_man_skip.out 2>$(CTRDLOGDIR)/ctriface_log_noupf_man_skip.err &
@@ -65,3 +75,26 @@ bench:
 	sudo env "PATH=$(PATH)" go test $(BENCHFILES) $(GOBENCH)
 	./../scripts/clean_fcctr.sh
 .PHONY: test test-man test-man-upf bench
+
+test-seqCSS:
+	sudo ./clear_cache.sh
+	./../scripts/clean_fcctr.sh
+	sudo mkdir -m777 -p $(CTRDLOGDIR) && sudo env "PATH=$(PATH)" /usr/local/bin/firecracker-containerd --config /etc/firecracker-containerd/config.toml 1>$(CTRDLOGDIR)/phased.out 2>$(CTRDLOGDIR)/phased.err &
+	sudo env "PATH=$(PATH)" go test $(EXTRAGOARGS) -run TestSequentialCSS -args $(WITHUPF) \
+	-writeBW=$(writeBW) -isVmTouch=$(isVmTouch) -dumpMetrics=$(dumpMetrics) \
+	-parallelNum=$(parallelNum) -interferNum=$(interferNum) -sameCtImg=$(sameCtImg) \
+	# & sudo iotop -d 0.1 -t -o -k > ./BW_logs/iotop_$(parallelNum)_$(interferNum)_$(writeBW).log \
+	# & iostat -m -t 1 -p sda -c -o JSON > ./BW_logs/iostat_$(parallelNum)_$(interferNum)_$(writeBW).json
+	# python3 /home/cc/vhive/ctriface/get_iostat.py ./Seq_CreateSS_$(parallelNum)_$(interferNum)/iostat_$(parallelNum)_$(interferNum)
+	# python3 /home/cc/vhive/ctriface/get_iotop.py ./Seq_CreateSS_$(parallelNum)_$(interferNum)/iotop_$(parallelNum)_$(interferNum)
+	./kill_running_tools.sh
+
+test-onlyCSS:
+	sudo ./clear_cache.sh
+	./../scripts/clean_fcctr.sh
+	sudo mkdir -m777 -p $(CTRDLOGDIR) && sudo env "PATH=$(PATH)" /usr/local/bin/firecracker-containerd --config /etc/firecracker-containerd/config.toml 1>$(CTRDLOGDIR)/phased.out 2>$(CTRDLOGDIR)/phased.err &
+	sudo env "PATH=$(PATH)" go test $(EXTRAGOARGS) -run TestOnlyCSS -args $(WITHUPF) \
+	-writeBW=$(writeBW) -isVmTouch=$(isVmTouch) -dumpMetrics=$(dumpMetrics) \
+	-parallelNum=$(parallelNum) -interferNum=$(interferNum) \
+	# & iostat -m -t 1 -p sda -c -o JSON > ./only_CSS/iostat_$(interferNum)_$(writeBW).json \
+	# & sudo iotop -d 0.1 -t -o -k > ./only_CSS/iotop_$(interferNum)_$(writeBW).json
