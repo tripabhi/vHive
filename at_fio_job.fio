@@ -1,0 +1,15 @@
+[global]
+name=fiotest
+ioengine=libaio
+iodepth=32
+end_fsync=1
+group_reporting
+runtime=60
+
+[random-rw-test1]
+rw=write
+bs=1M
+size=8Gb
+numjobs=8
+filename=/var/lib/fio_space/dump
+output=/home/cc/vHive/ctriface/test_diffCSSNC/fio/8GB

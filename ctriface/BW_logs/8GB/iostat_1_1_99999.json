@@ -1,0 +1,724 @@
+{"sysstat": {
+	"hosts": [
+		{
+			"nodename": "nu-ins-1",
+			"sysname": "Linux",
+			"release": "5.4.0-107-generic",
+			"machine": "x86_64",
+			"number-of-cpus": 48,
+			"date": "10/21/22",
+			"statistics": [
+				{
+					"timestamp": "10/21/22 21:26:59",
+					"avg-cpu":  {"user": 0.12, "nice": 0.00, "system": 0.09, "iowait": 0.59, "steal": 0.00, "idle": 99.19},
+					"disk": [
+						{"disk_device": "sda", "tps": 58.10, "MB_read/s": 0.85, "MB_wrtn/s": 3.88, "MB_dscd/s": 0.00, "MB_read": 74145, "MB_wrtn": 338028, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 8, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 58.10, "MB_read/s": 0.85, "MB_wrtn/s": 3.88, "MB_dscd/s": 0.00, "MB_read": 74134, "MB_wrtn": 338028, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:00",
+					"avg-cpu":  {"user": 10.81, "nice": 0.00, "system": 3.91, "iowait": 8.69, "steal": 0.00, "idle": 76.60},
+					"disk": [
+						{"disk_device": "sda", "tps": 11130.00, "MB_read/s": 114.15, "MB_wrtn/s": 4.36, "MB_dscd/s": 0.00, "MB_read": 114, "MB_wrtn": 4, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 11130.00, "MB_read/s": 114.15, "MB_wrtn/s": 4.36, "MB_dscd/s": 0.00, "MB_read": 114, "MB_wrtn": 4, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:01",
+					"avg-cpu":  {"user": 2.22, "nice": 0.00, "system": 0.57, "iowait": 1.03, "steal": 0.00, "idle": 96.19},
+					"disk": [
+						{"disk_device": "sda", "tps": 1431.68, "MB_read/s": 82.61, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 83, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 1431.68, "MB_read/s": 82.61, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 83, "MB_wrtn": 0, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:02",
+					"avg-cpu":  {"user": 0.90, "nice": 0.00, "system": 0.33, "iowait": 1.46, "steal": 0.00, "idle": 97.31},
+					"disk": [
+						{"disk_device": "sda", "tps": 1043.00, "MB_read/s": 84.75, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 84, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 1043.00, "MB_read/s": 84.75, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 84, "MB_wrtn": 0, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:03",
+					"avg-cpu":  {"user": 2.31, "nice": 0.00, "system": 1.00, "iowait": 0.67, "steal": 0.00, "idle": 96.02},
+					"disk": [
+						{"disk_device": "sda", "tps": 374.00, "MB_read/s": 29.38, "MB_wrtn/s": 2.52, "MB_dscd/s": 0.00, "MB_read": 29, "MB_wrtn": 2, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 374.00, "MB_read/s": 29.38, "MB_wrtn/s": 2.52, "MB_dscd/s": 0.00, "MB_read": 29, "MB_wrtn": 2, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:04",
+					"avg-cpu":  {"user": 1.25, "nice": 0.00, "system": 1.50, "iowait": 0.83, "steal": 0.00, "idle": 96.41},
+					"disk": [
+						{"disk_device": "sda", "tps": 474.00, "MB_read/s": 2.26, "MB_wrtn/s": 21.45, "MB_dscd/s": 0.00, "MB_read": 2, "MB_wrtn": 21, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 475.00, "MB_read/s": 2.26, "MB_wrtn/s": 21.70, "MB_dscd/s": 0.00, "MB_read": 2, "MB_wrtn": 21, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:05",
+					"avg-cpu":  {"user": 0.33, "nice": 0.00, "system": 0.42, "iowait": 6.59, "steal": 0.00, "idle": 92.66},
+					"disk": [
+						{"disk_device": "sda", "tps": 887.00, "MB_read/s": 0.01, "MB_wrtn/s": 195.38, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 195, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 886.00, "MB_read/s": 0.01, "MB_wrtn/s": 195.12, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 195, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:06",
+					"avg-cpu":  {"user": 5.55, "nice": 0.00, "system": 2.24, "iowait": 0.67, "steal": 0.00, "idle": 91.54},
+					"disk": [
+						{"disk_device": "sda", "tps": 504.00, "MB_read/s": 0.01, "MB_wrtn/s": 31.59, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 31, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 504.00, "MB_read/s": 0.01, "MB_wrtn/s": 31.59, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 31, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:07",
+					"avg-cpu":  {"user": 8.25, "nice": 0.00, "system": 2.32, "iowait": 0.19, "steal": 0.00, "idle": 89.24},
+					"disk": [
+						{"disk_device": "sda", "tps": 94.00, "MB_read/s": 1.12, "MB_wrtn/s": 15.69, "MB_dscd/s": 0.00, "MB_read": 1, "MB_wrtn": 15, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 94.00, "MB_read/s": 1.12, "MB_wrtn/s": 15.69, "MB_dscd/s": 0.00, "MB_read": 1, "MB_wrtn": 15, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:08",
+					"avg-cpu":  {"user": 6.62, "nice": 0.00, "system": 2.98, "iowait": 1.95, "steal": 0.00, "idle": 88.44},
+					"disk": [
+						{"disk_device": "sda", "tps": 368.00, "MB_read/s": 0.00, "MB_wrtn/s": 65.12, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 65, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 368.00, "MB_read/s": 0.00, "MB_wrtn/s": 65.12, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 65, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:09",
+					"avg-cpu":  {"user": 6.94, "nice": 0.00, "system": 1.83, "iowait": 0.00, "steal": 0.00, "idle": 91.23},
+					"disk": [
+						{"disk_device": "sda", "tps": 2.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.01, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 2.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.01, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:10",
+					"avg-cpu":  {"user": 6.18, "nice": 0.00, "system": 2.07, "iowait": 0.00, "steal": 0.00, "idle": 91.75},
+					"disk": [
+						{"disk_device": "sda", "tps": 3.00, "MB_read/s": 0.01, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 3.00, "MB_read/s": 0.01, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:11",
+					"avg-cpu":  {"user": 5.67, "nice": 0.00, "system": 1.74, "iowait": 0.77, "steal": 0.00, "idle": 91.82},
+					"disk": [
+						{"disk_device": "sda", "tps": 477.00, "MB_read/s": 0.00, "MB_wrtn/s": 76.50, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 76, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 477.00, "MB_read/s": 0.00, "MB_wrtn/s": 76.50, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 76, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:12",
+					"avg-cpu":  {"user": 5.81, "nice": 0.00, "system": 1.53, "iowait": 0.65, "steal": 0.00, "idle": 92.01},
+					"disk": [
+						{"disk_device": "sda", "tps": 292.00, "MB_read/s": 0.00, "MB_wrtn/s": 66.45, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 66, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 292.00, "MB_read/s": 0.00, "MB_wrtn/s": 66.45, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 66, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:13",
+					"avg-cpu":  {"user": 6.34, "nice": 0.00, "system": 1.66, "iowait": 0.17, "steal": 0.00, "idle": 91.84},
+					"disk": [
+						{"disk_device": "sda", "tps": 76.00, "MB_read/s": 0.00, "MB_wrtn/s": 18.25, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 18, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 76.00, "MB_read/s": 0.00, "MB_wrtn/s": 18.29, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 18, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:14",
+					"avg-cpu":  {"user": 2.44, "nice": 0.00, "system": 1.08, "iowait": 2.54, "steal": 0.00, "idle": 93.93},
+					"disk": [
+						{"disk_device": "sda", "tps": 817.00, "MB_read/s": 0.00, "MB_wrtn/s": 194.65, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 194, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 817.00, "MB_read/s": 0.00, "MB_wrtn/s": 194.61, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 194, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:15",
+					"avg-cpu":  {"user": 1.63, "nice": 0.00, "system": 0.54, "iowait": 2.84, "steal": 0.00, "idle": 94.99},
+					"disk": [
+						{"disk_device": "sda", "tps": 621.00, "MB_read/s": 0.00, "MB_wrtn/s": 148.94, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 148, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 621.00, "MB_read/s": 0.00, "MB_wrtn/s": 148.94, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 148, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:16",
+					"avg-cpu":  {"user": 2.21, "nice": 0.00, "system": 0.42, "iowait": 0.25, "steal": 0.00, "idle": 97.12},
+					"disk": [
+						{"disk_device": "sda", "tps": 81.00, "MB_read/s": 0.00, "MB_wrtn/s": 18.41, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 18, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 81.00, "MB_read/s": 0.00, "MB_wrtn/s": 18.41, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 18, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:17",
+					"avg-cpu":  {"user": 1.75, "nice": 0.00, "system": 1.33, "iowait": 2.48, "steal": 0.00, "idle": 94.44},
+					"disk": [
+						{"disk_device": "sda", "tps": 296.00, "MB_read/s": 0.45, "MB_wrtn/s": 59.93, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 59, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 296.00, "MB_read/s": 0.45, "MB_wrtn/s": 59.93, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 59, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:18",
+					"avg-cpu":  {"user": 0.50, "nice": 0.00, "system": 0.35, "iowait": 6.15, "steal": 0.00, "idle": 92.99},
+					"disk": [
+						{"disk_device": "sda", "tps": 719.00, "MB_read/s": 0.22, "MB_wrtn/s": 178.46, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 178, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 720.00, "MB_read/s": 0.22, "MB_wrtn/s": 178.71, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 178, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:19",
+					"avg-cpu":  {"user": 1.34, "nice": 0.00, "system": 1.06, "iowait": 1.77, "steal": 0.00, "idle": 95.83},
+					"disk": [
+						{"disk_device": "sda", "tps": 432.00, "MB_read/s": 0.00, "MB_wrtn/s": 49.79, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 49, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 431.00, "MB_read/s": 0.00, "MB_wrtn/s": 49.54, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 49, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:20",
+					"avg-cpu":  {"user": 2.35, "nice": 0.00, "system": 0.50, "iowait": 0.00, "steal": 0.00, "idle": 97.15},
+					"disk": [
+						{"disk_device": "sda", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:21",
+					"avg-cpu":  {"user": 2.34, "nice": 0.00, "system": 0.40, "iowait": 0.00, "steal": 0.00, "idle": 97.27},
+					"disk": [
+						{"disk_device": "sda", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:22",
+					"avg-cpu":  {"user": 2.46, "nice": 0.00, "system": 0.40, "iowait": 0.00, "steal": 0.00, "idle": 97.14},
+					"disk": [
+						{"disk_device": "sda", "tps": 115.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.54, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 115.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.54, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:23",
+					"avg-cpu":  {"user": 2.77, "nice": 0.00, "system": 0.44, "iowait": 0.00, "steal": 0.00, "idle": 96.79},
+					"disk": [
+						{"disk_device": "sda", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:24",
+					"avg-cpu":  {"user": 2.24, "nice": 0.00, "system": 0.79, "iowait": 1.61, "steal": 0.00, "idle": 95.36},
+					"disk": [
+						{"disk_device": "sda", "tps": 123.00, "MB_read/s": 0.00, "MB_wrtn/s": 28.58, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 28, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 123.00, "MB_read/s": 0.00, "MB_wrtn/s": 28.58, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 28, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:25",
+					"avg-cpu":  {"user": 1.05, "nice": 0.00, "system": 1.86, "iowait": 3.83, "steal": 0.00, "idle": 93.27},
+					"disk": [
+						{"disk_device": "sda", "tps": 328.00, "MB_read/s": 0.00, "MB_wrtn/s": 76.03, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 76, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 328.00, "MB_read/s": 0.00, "MB_wrtn/s": 76.03, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 76, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:26",
+					"avg-cpu":  {"user": 0.44, "nice": 0.00, "system": 0.33, "iowait": 6.05, "steal": 0.00, "idle": 93.18},
+					"disk": [
+						{"disk_device": "sda", "tps": 819.00, "MB_read/s": 0.00, "MB_wrtn/s": 185.81, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 185, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 819.00, "MB_read/s": 0.00, "MB_wrtn/s": 185.81, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 185, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:27",
+					"avg-cpu":  {"user": 0.38, "nice": 0.00, "system": 0.27, "iowait": 6.11, "steal": 0.00, "idle": 93.25},
+					"disk": [
+						{"disk_device": "sda", "tps": 770.00, "MB_read/s": 0.01, "MB_wrtn/s": 190.92, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 190, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 770.00, "MB_read/s": 0.01, "MB_wrtn/s": 190.92, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 190, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:28",
+					"avg-cpu":  {"user": 1.42, "nice": 0.00, "system": 1.27, "iowait": 2.30, "steal": 0.00, "idle": 95.01},
+					"disk": [
+						{"disk_device": "sda", "tps": 528.00, "MB_read/s": 0.80, "MB_wrtn/s": 74.77, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 74, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 528.00, "MB_read/s": 0.80, "MB_wrtn/s": 74.77, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 74, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:29",
+					"avg-cpu":  {"user": 1.08, "nice": 0.00, "system": 0.92, "iowait": 0.21, "steal": 0.00, "idle": 97.79},
+					"disk": [
+						{"disk_device": "sda", "tps": 304.00, "MB_read/s": 0.00, "MB_wrtn/s": 9.38, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 9, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 304.00, "MB_read/s": 0.00, "MB_wrtn/s": 9.38, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 9, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:30",
+					"avg-cpu":  {"user": 0.42, "nice": 0.00, "system": 0.75, "iowait": 6.28, "steal": 0.00, "idle": 92.55},
+					"disk": [
+						{"disk_device": "sda", "tps": 782.00, "MB_read/s": 0.01, "MB_wrtn/s": 178.21, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 178, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 782.00, "MB_read/s": 0.01, "MB_wrtn/s": 178.21, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 178, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:31",
+					"avg-cpu":  {"user": 4.71, "nice": 0.00, "system": 1.70, "iowait": 1.85, "steal": 0.00, "idle": 91.74},
+					"disk": [
+						{"disk_device": "sda", "tps": 652.00, "MB_read/s": 0.00, "MB_wrtn/s": 64.20, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 64, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 652.00, "MB_read/s": 0.00, "MB_wrtn/s": 64.20, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 64, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:32",
+					"avg-cpu":  {"user": 6.74, "nice": 0.00, "system": 2.20, "iowait": 0.00, "steal": 0.00, "idle": 91.07},
+					"disk": [
+						{"disk_device": "sda", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:33",
+					"avg-cpu":  {"user": 6.97, "nice": 0.00, "system": 1.65, "iowait": 0.00, "steal": 0.00, "idle": 91.37},
+					"disk": [
+						{"disk_device": "sda", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:34",
+					"avg-cpu":  {"user": 6.15, "nice": 0.00, "system": 1.83, "iowait": 0.50, "steal": 0.00, "idle": 91.52},
+					"disk": [
+						{"disk_device": "sda", "tps": 235.00, "MB_read/s": 0.00, "MB_wrtn/s": 53.29, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 53, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 235.00, "MB_read/s": 0.00, "MB_wrtn/s": 53.29, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 53, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:35",
+					"avg-cpu":  {"user": 5.04, "nice": 0.00, "system": 1.80, "iowait": 0.82, "steal": 0.00, "idle": 92.35},
+					"disk": [
+						{"disk_device": "sda", "tps": 363.00, "MB_read/s": 0.00, "MB_wrtn/s": 84.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 84, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 363.00, "MB_read/s": 0.00, "MB_wrtn/s": 84.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 84, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:36",
+					"avg-cpu":  {"user": 4.28, "nice": 0.00, "system": 1.28, "iowait": 0.23, "steal": 0.00, "idle": 94.21},
+					"disk": [
+						{"disk_device": "sda", "tps": 172.00, "MB_read/s": 0.00, "MB_wrtn/s": 26.90, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 26, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 172.00, "MB_read/s": 0.00, "MB_wrtn/s": 26.90, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 26, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:37",
+					"avg-cpu":  {"user": 4.75, "nice": 0.00, "system": 1.29, "iowait": 0.00, "steal": 0.00, "idle": 93.96},
+					"disk": [
+						{"disk_device": "sda", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:38",
+					"avg-cpu":  {"user": 4.71, "nice": 0.00, "system": 1.38, "iowait": 0.02, "steal": 0.00, "idle": 93.89},
+					"disk": [
+						{"disk_device": "sda", "tps": 7.00, "MB_read/s": 0.50, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 7.00, "MB_read/s": 0.50, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:39",
+					"avg-cpu":  {"user": 1.65, "nice": 0.00, "system": 0.54, "iowait": 1.30, "steal": 0.00, "idle": 96.51},
+					"disk": [
+						{"disk_device": "sda", "tps": 523.00, "MB_read/s": 0.00, "MB_wrtn/s": 125.75, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 125, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 523.00, "MB_read/s": 0.00, "MB_wrtn/s": 125.75, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 125, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:40",
+					"avg-cpu":  {"user": 1.04, "nice": 0.00, "system": 0.44, "iowait": 1.36, "steal": 0.00, "idle": 97.16},
+					"disk": [
+						{"disk_device": "sda", "tps": 472.00, "MB_read/s": 0.00, "MB_wrtn/s": 111.11, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 111, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 472.00, "MB_read/s": 0.00, "MB_wrtn/s": 111.11, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 111, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:41",
+					"avg-cpu":  {"user": 2.67, "nice": 0.00, "system": 0.92, "iowait": 0.00, "steal": 0.00, "idle": 96.41},
+					"disk": [
+						{"disk_device": "sda", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:42",
+					"avg-cpu":  {"user": 2.33, "nice": 0.00, "system": 0.48, "iowait": 0.00, "steal": 0.00, "idle": 97.19},
+					"disk": [
+						{"disk_device": "sda", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:43",
+					"avg-cpu":  {"user": 2.50, "nice": 0.00, "system": 0.44, "iowait": 0.00, "steal": 0.00, "idle": 97.06},
+					"disk": [
+						{"disk_device": "sda", "tps": 99.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.41, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 99.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.41, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:44",
+					"avg-cpu":  {"user": 2.30, "nice": 0.00, "system": 0.57, "iowait": 0.00, "steal": 0.00, "idle": 97.13},
+					"disk": [
+						{"disk_device": "sda", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:45",
+					"avg-cpu":  {"user": 2.33, "nice": 0.00, "system": 1.31, "iowait": 0.54, "steal": 0.00, "idle": 95.81},
+					"disk": [
+						{"disk_device": "sda", "tps": 55.00, "MB_read/s": 0.00, "MB_wrtn/s": 9.15, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 9, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 55.00, "MB_read/s": 0.00, "MB_wrtn/s": 9.15, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 9, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:46",
+					"avg-cpu":  {"user": 2.42, "nice": 0.00, "system": 0.50, "iowait": 0.00, "steal": 0.00, "idle": 97.08},
+					"disk": [
+						{"disk_device": "sda", "tps": 1.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 1.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:47",
+					"avg-cpu":  {"user": 2.34, "nice": 0.00, "system": 0.50, "iowait": 1.40, "steal": 0.00, "idle": 95.77},
+					"disk": [
+						{"disk_device": "sda", "tps": 225.00, "MB_read/s": 0.00, "MB_wrtn/s": 55.23, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 55, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 225.00, "MB_read/s": 0.00, "MB_wrtn/s": 55.23, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 55, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:48",
+					"avg-cpu":  {"user": 2.63, "nice": 0.00, "system": 0.69, "iowait": 3.40, "steal": 0.00, "idle": 93.27},
+					"disk": [
+						{"disk_device": "sda", "tps": 612.00, "MB_read/s": 0.38, "MB_wrtn/s": 148.87, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 148, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 612.00, "MB_read/s": 0.38, "MB_wrtn/s": 148.87, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 148, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:49",
+					"avg-cpu":  {"user": 1.92, "nice": 0.00, "system": 1.13, "iowait": 1.13, "steal": 0.00, "idle": 95.82},
+					"disk": [
+						{"disk_device": "sda", "tps": 81.00, "MB_read/s": 0.00, "MB_wrtn/s": 15.89, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 15, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 81.00, "MB_read/s": 0.00, "MB_wrtn/s": 15.89, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 15, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:50",
+					"avg-cpu":  {"user": 0.54, "nice": 0.00, "system": 0.46, "iowait": 5.88, "steal": 0.00, "idle": 93.11},
+					"disk": [
+						{"disk_device": "sda", "tps": 766.00, "MB_read/s": 0.01, "MB_wrtn/s": 189.46, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 189, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 766.00, "MB_read/s": 0.01, "MB_wrtn/s": 189.46, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 189, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:51",
+					"avg-cpu":  {"user": 0.52, "nice": 0.00, "system": 1.75, "iowait": 3.67, "steal": 0.00, "idle": 94.05},
+					"disk": [
+						{"disk_device": "sda", "tps": 492.00, "MB_read/s": 0.00, "MB_wrtn/s": 112.79, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 112, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 492.00, "MB_read/s": 0.00, "MB_wrtn/s": 112.79, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 112, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:52",
+					"avg-cpu":  {"user": 0.40, "nice": 0.00, "system": 0.38, "iowait": 5.57, "steal": 0.00, "idle": 93.66},
+					"disk": [
+						{"disk_device": "sda", "tps": 788.00, "MB_read/s": 0.01, "MB_wrtn/s": 196.50, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 196, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 788.00, "MB_read/s": 0.01, "MB_wrtn/s": 196.50, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 196, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:53",
+					"avg-cpu":  {"user": 0.42, "nice": 0.00, "system": 0.60, "iowait": 4.69, "steal": 0.00, "idle": 94.29},
+					"disk": [
+						{"disk_device": "sda", "tps": 717.00, "MB_read/s": 0.00, "MB_wrtn/s": 146.17, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 146, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 717.00, "MB_read/s": 0.00, "MB_wrtn/s": 146.17, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 146, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:54",
+					"avg-cpu":  {"user": 2.25, "nice": 0.00, "system": 0.92, "iowait": 0.02, "steal": 0.00, "idle": 96.81},
+					"disk": [
+						{"disk_device": "sda", "tps": 83.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.82, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 83.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.82, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:55",
+					"avg-cpu":  {"user": 2.54, "nice": 0.00, "system": 0.46, "iowait": 0.00, "steal": 0.00, "idle": 97.00},
+					"disk": [
+						{"disk_device": "sda", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:56",
+					"avg-cpu":  {"user": 0.81, "nice": 0.00, "system": 1.19, "iowait": 3.65, "steal": 0.00, "idle": 94.35},
+					"disk": [
+						{"disk_device": "sda", "tps": 383.00, "MB_read/s": 0.00, "MB_wrtn/s": 90.06, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 90, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 383.00, "MB_read/s": 0.00, "MB_wrtn/s": 90.06, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 90, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:57",
+					"avg-cpu":  {"user": 0.67, "nice": 0.00, "system": 0.73, "iowait": 3.59, "steal": 0.00, "idle": 95.01},
+					"disk": [
+						{"disk_device": "sda", "tps": 585.00, "MB_read/s": 0.00, "MB_wrtn/s": 95.76, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 95, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 587.00, "MB_read/s": 0.00, "MB_wrtn/s": 95.77, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 95, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:58",
+					"avg-cpu":  {"user": 2.27, "nice": 0.00, "system": 0.88, "iowait": 0.04, "steal": 0.00, "idle": 96.81},
+					"disk": [
+						{"disk_device": "sda", "tps": 179.00, "MB_read/s": 0.00, "MB_wrtn/s": 2.16, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 2, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 177.00, "MB_read/s": 0.00, "MB_wrtn/s": 2.16, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 2, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:27:59",
+					"avg-cpu":  {"user": 2.86, "nice": 0.00, "system": 0.54, "iowait": 0.00, "steal": 0.00, "idle": 96.60},
+					"disk": [
+						{"disk_device": "sda", "tps": 123.00, "MB_read/s": 0.20, "MB_wrtn/s": 0.59, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 123.00, "MB_read/s": 0.20, "MB_wrtn/s": 0.59, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:28:00",
+					"avg-cpu":  {"user": 2.69, "nice": 0.00, "system": 0.94, "iowait": 0.23, "steal": 0.00, "idle": 96.15},
+					"disk": [
+						{"disk_device": "sda", "tps": 26.00, "MB_read/s": 0.01, "MB_wrtn/s": 3.06, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 3, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 26.00, "MB_read/s": 0.01, "MB_wrtn/s": 3.06, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 3, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:28:01",
+					"avg-cpu":  {"user": 0.40, "nice": 0.00, "system": 0.90, "iowait": 5.27, "steal": 0.00, "idle": 93.43},
+					"disk": [
+						{"disk_device": "sda", "tps": 628.00, "MB_read/s": 0.00, "MB_wrtn/s": 154.38, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 154, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 629.00, "MB_read/s": 0.00, "MB_wrtn/s": 154.62, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 154, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:28:02",
+					"avg-cpu":  {"user": 0.92, "nice": 0.00, "system": 0.92, "iowait": 2.52, "steal": 0.00, "idle": 95.64},
+					"disk": [
+						{"disk_device": "sda", "tps": 638.00, "MB_read/s": 0.00, "MB_wrtn/s": 96.77, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 96, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 637.00, "MB_read/s": 0.00, "MB_wrtn/s": 96.52, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 96, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:28:03",
+					"avg-cpu":  {"user": 1.23, "nice": 0.00, "system": 1.10, "iowait": 0.85, "steal": 0.00, "idle": 96.81},
+					"disk": [
+						{"disk_device": "sda", "tps": 574.00, "MB_read/s": 49.15, "MB_wrtn/s": 0.34, "MB_dscd/s": 0.00, "MB_read": 49, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 574.00, "MB_read/s": 49.15, "MB_wrtn/s": 0.34, "MB_dscd/s": 0.00, "MB_read": 49, "MB_wrtn": 0, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:28:04",
+					"avg-cpu":  {"user": 2.58, "nice": 0.00, "system": 0.75, "iowait": 0.25, "steal": 0.00, "idle": 96.42},
+					"disk": [
+						{"disk_device": "sda", "tps": 664.00, "MB_read/s": 18.78, "MB_wrtn/s": 1.89, "MB_dscd/s": 0.00, "MB_read": 18, "MB_wrtn": 1, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 664.00, "MB_read/s": 18.78, "MB_wrtn/s": 1.89, "MB_dscd/s": 0.00, "MB_read": 18, "MB_wrtn": 1, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:28:05",
+					"avg-cpu":  {"user": 0.67, "nice": 0.00, "system": 2.17, "iowait": 0.02, "steal": 0.00, "idle": 97.15},
+					"disk": [
+						{"disk_device": "sda", "tps": 51.00, "MB_read/s": 2.73, "MB_wrtn/s": 0.02, "MB_dscd/s": 0.00, "MB_read": 2, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 51.00, "MB_read/s": 2.73, "MB_wrtn/s": 0.02, "MB_dscd/s": 0.00, "MB_read": 2, "MB_wrtn": 0, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:28:06",
+					"avg-cpu":  {"user": 0.42, "nice": 0.00, "system": 2.54, "iowait": 0.00, "steal": 0.00, "idle": 97.05},
+					"disk": [
+						{"disk_device": "sda", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:28:07",
+					"avg-cpu":  {"user": 0.37, "nice": 0.00, "system": 2.46, "iowait": 0.42, "steal": 0.00, "idle": 96.75},
+					"disk": [
+						{"disk_device": "sda", "tps": 177.00, "MB_read/s": 0.00, "MB_wrtn/s": 38.38, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 38, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 177.00, "MB_read/s": 0.00, "MB_wrtn/s": 38.38, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 38, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:28:08",
+					"avg-cpu":  {"user": 0.44, "nice": 0.00, "system": 2.52, "iowait": 0.50, "steal": 0.00, "idle": 96.54},
+					"disk": [
+						{"disk_device": "sda", "tps": 232.00, "MB_read/s": 0.00, "MB_wrtn/s": 57.76, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 57, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 232.00, "MB_read/s": 0.00, "MB_wrtn/s": 57.76, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 57, "MB_dscd": 0}
+					]
+				},
+				{
+					"timestamp": "10/21/22 21:28:09",
+					"avg-cpu":  {"user": 2.13, "nice": 0.00, "system": 4.05, "iowait": 0.00, "steal": 0.00, "idle": 93.82},
+					"disk": [
+						{"disk_device": "sda", "tps": 7.00, "MB_read/s": 0.38, "MB_wrtn/s": 0.18, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda1", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda2", "tps": 0.00, "MB_read/s": 0.00, "MB_wrtn/s": 0.00, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0},
+						{"disk_device": "sda3", "tps": 7.00, "MB_read/s": 0.38, "MB_wrtn/s": 0.18, "MB_dscd/s": 0.00, "MB_read": 0, "MB_wrtn": 0, "MB_dscd": 0}
+					]
+				}
+			]
+		}
+	]
+}}

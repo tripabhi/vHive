@@ -1,0 +1,16 @@
+[global]
+name=fiotest
+ioengine=libaio
+direct=0
+iodepth=32
+group_reporting
+time_based=1
+runtime=100
+end_fsync=1
+
+[job1]
+rw=write
+bs=4k
+size=8G
+numjobs=1
+filename=/var/lib/fio_space/testfio

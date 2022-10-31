@@ -13,12 +13,12 @@ for i in $iotopPids; do
 done
 
 
-# fioPids=$(ps -ef | grep fio | awk '{print $2}')
-# # echo $pids
-# for i in $fioPids; do
-#   echo $i
-#   sudo kill -9 $i
-# done
+fioPids=$(ps -ef | grep fio | awk '{print $2}')
+# echo $pids
+for i in $fioPids; do
+  echo $i
+  sudo kill -9 $i
+done
 
 iostatPids=$(ps -ef | grep iostat | awk '{print $2}')
 # echo $pids

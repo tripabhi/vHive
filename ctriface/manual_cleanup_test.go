@@ -24,35 +24,35 @@ package ctriface
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"os"
+	"os/exec"
 	"sync"
 	"testing"
 	"time"
-	"flag"
-	"os/exec"
 
-	"github.com/vhive-serverless/vhive/metrics"
 	ctrdlog "github.com/containerd/containerd/log"
 	"github.com/containerd/containerd/namespaces"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/require"
+	"github.com/vhive-serverless/vhive/metrics"
 )
 
 var (
 	parallelNum = flag.Int("parallelNum", 1, "Number of parallel instances to start")
 	interferNum = flag.Int("interferNum", 1, "Number of interference instances doing createsnapshot")
 	// iterNum     = flag.Int("iter", 1, "Number of iterations to run")
-	funcName    = flag.String("funcName", "helloworld", "Name of the function to benchmark")
-	snapFilePath= flag.String("snapFilePath", "/fccd/snapshots", "path for snapshots")
-	writeBW		= flag.Int("writeBW", 99999, "maximum write BW in MB/s")
-	vmSize uint32 = 256
-	isVmTouch	= flag.Bool("isVmTouch", false, "preload the rootfs img and required metadata before createVM or not")
-	dumpMetrics = flag.Bool("dumpMetrics", true, "dump metrics or not")
-	useNVMe		= flag.Bool("useNVMe", false, "use nvme or not")
-	sameCtImg = flag.Bool("sameCtImg", false, "same container image for interferon and victim or not")
-	isUPFEnabled = flag.Bool("upf", false, "isUPFEnabled or not")
-	isLazyMode = flag.Bool("lazy", false, "isLazyMode or not")
+	funcName            = flag.String("funcName", "helloworld", "Name of the function to benchmark")
+	snapFilePath        = flag.String("snapFilePath", "/fccd/snapshots", "path for snapshots")
+	writeBW             = flag.Int("writeBW", 99999, "maximum write BW in MB/s")
+	vmSize       uint32 = 8192
+	isVmTouch           = flag.Bool("isVmTouch", false, "preload the rootfs img and required metadata before createVM or not")
+	dumpMetrics         = flag.Bool("dumpMetrics", true, "dump metrics or not")
+	useNVMe             = flag.Bool("useNVMe", false, "use nvme or not")
+	sameCtImg           = flag.Bool("sameCtImg", false, "same container image for interferon and victim or not")
+	isUPFEnabled        = flag.Bool("upf", false, "isUPFEnabled or not")
+	isLazyMode          = flag.Bool("lazy", false, "isLazyMode or not")
 )
 
 func TestSnapLoadOnlyOne(t *testing.T) {
@@ -347,7 +347,7 @@ func TestParallelPhasedSnapLoad(t *testing.T) {
 
 func TestSequentialCSS(t *testing.T) {
 	var (
-		serveMetrics = make([]*metrics.Metric, *parallelNum)//intf:8 parallelNum:1
+		serveMetrics        = make([]*metrics.Metric, *parallelNum) //intf:8 parallelNum:1
 		CreateSSInstancePid = make([]string, *interferNum)
 	)
 	for i := 0; i < *parallelNum; i++ {
@@ -393,9 +393,9 @@ func TestSequentialCSS(t *testing.T) {
 	defer orch.Cleanup()
 
 	// Pull image
-	log.Info("pulling intf image now......")
-	_, err := orch.getImage(ctx, testImageName)
-	require.NoError(t, err, "Failed to pull image "+testImageName)
+	// log.Info("pulling intf image now......")
+	// _, err := orch.getImage(ctx, testImageName)
+	// require.NoError(t, err, "Failed to pull image "+testImageName)
 	ImageName := testImageName
 	if !*sameCtImg {
 		ImageName = testImageNamePyaes
@@ -403,9 +403,8 @@ func TestSequentialCSS(t *testing.T) {
 		_, err := orch.getImage(ctx, testImageNamePyaes)
 		require.NoError(t, err, "Failed to pull image "+testImageNamePyaes)
 	}
-	
-	// log.Info("pull complete, starting Victim VM ...")
 
+	// log.Info("pull complete, starting Victim VM ...")
 
 	log.Info("Starting Intf VM ...")
 	{
@@ -449,17 +448,17 @@ func TestSequentialCSS(t *testing.T) {
 	}
 
 	// throttle interferon writeBW
-	if (*writeBW == 99999) {
+	if *writeBW == 99999 {
 		log.Info("resetting to no throttling...")
 		throttleIoMaxCmd := "echo \"8:0 wbps=max\" | sudo tee /sys/fs/cgroup/test/io.max"
 		exec.Command("/bin/bash", "-c", throttleIoMaxCmd).Start()
-	} else{
+	} else {
 		// echo max BW into io.max
-		maxWriteBWByte := 1024*1024*(*writeBW)
+		maxWriteBWByte := 1024 * 1024 * (*writeBW)
 		log.Info("throttling to ", maxWriteBWByte)
 		throttleIoMaxCmd := fmt.Sprintf("echo \"8:0 wbps=%d\" | sudo tee /sys/fs/cgroup/test/io.max", maxWriteBWByte)
 		exec.Command("/bin/bash", "-c", throttleIoMaxCmd).Start()
-		// put createss pid(s) into procs 
+		// put createss pid(s) into procs
 		for i := 0; i < *interferNum; i++ {
 			throttlePidCmd := fmt.Sprintf("echo %s | sudo tee /sys/fs/cgroup/test/cgroup.procs", CreateSSInstancePid[i])
 			throttlePidCmdExec := exec.Command("/bin/bash", "-c", throttlePidCmd)
@@ -471,34 +470,39 @@ func TestSequentialCSS(t *testing.T) {
 			fmt.Println(string(stdout))
 		}
 	}
+	time.Sleep(100 * time.Millisecond)
 
-	log.Info("Creating Seq Intf Snapshots ...")
-	quit := make(chan bool)
-	for i := 0; i < *interferNum; i++ {
-		go func(i int) {
-			vmID := fmt.Sprintf("%d", i+vmIDBase)
-			err := orch.InfiniteCreateSnapshot(quit, ctx, vmID)
-			require.NoError(t, err, "Failed to create snapshot of VM, "+vmID)
-		}(i)
-	}
-	// var intfGroup sync.WaitGroup
-	// {
-	// 	for i := 0; i < *interferNum; i++ {
-	// 		intfGroup.Add(1)
-	// 		go func(i int) {
-	// 			defer intfGroup.Done()
-	// 			vmID := fmt.Sprintf("%d", i+vmIDBase)
-	// 			err := orch.CreateSnapshot(ctx, vmID)
-	// 			// // serveMetrics[i].MetricMap[metrics.CreateSnapshot] = metrics.ToUS(time.Since(tStart))
-	// 			require.NoError(t, err, "Failed to create snapshot of VM, "+vmID)
-	// 		}(i)
-	// 	}
+	log.Info("Creating seq Snapshots ...")
+	// quit := make(chan bool)
+	// for i := 0; i < *interferNum; i++ {
+	// 	go func(i int) {
+	// 		vmID := fmt.Sprintf("%d", i+vmIDBase)
+	// 		err := orch.InfiniteCreateSnapshot(quit, ctx, vmID)
+	// 		require.NoError(t, err, "Failed to create snapshot of VM, "+vmID)
+	// 	}(i)
 	// }
+	var intfGroup sync.WaitGroup
+	{
+		for i := 0; i < *interferNum; i++ {
+			intfGroup.Add(1)
+			go func(i int) {
+				defer intfGroup.Done()
+				vmID := fmt.Sprintf("%d", i+vmIDBase)
+				err := orch.CreateSnapshot(ctx, vmID)
+				// // serveMetrics[i].MetricMap[metrics.CreateSnapshot] = metrics.ToUS(time.Since(tStart))
+				require.NoError(t, err, "Failed to create snapshot of VM, "+vmID)
+				log.Info("CSS finish!!!")
+			}(i)
+		}
+	}
 
-	// wait for a few second to make sure intf doing disk write
-	// time.Sleep(4*time.Second)
-	
-	
+	// log.Info("Starting FIO Job ...")
+	// exec.Command("/bin/bash", "-c", "./run_fio.sh").Start()
+
+	// log.Info("Sleeping for 2s")
+	// // // wait for a few second to make sure intf doing disk write
+	// time.Sleep(2 * time.Second)
+
 	// start victim
 	log.Info("start victim VMs...")
 	{
@@ -508,7 +512,7 @@ func TestSequentialCSS(t *testing.T) {
 			go func(i, x int) {
 				defer victimGroup.Done()
 				victimID := fmt.Sprintf("%d", i+vmIDBase)
-				
+
 				// var tStart = time.Now()
 				response, metr, err := orch.StartVM(ctx, victimID, ImageName, 256, 1)
 				// serveMetrics[x].MetricMap[metrics.StartVM] = metrics.ToUS(time.Since(tStart))
@@ -525,15 +529,14 @@ func TestSequentialCSS(t *testing.T) {
 	}
 
 	log.Info("Start VM Finishes here ...")
-	// intfGroup.Wait()
-	if *interferNum != 0 {
-		for i := 0; i < *interferNum; i++ {
-			quit <- true
-		}
-	}
+	intfGroup.Wait()
+	// if *interferNum != 0 {
+	// 	for i := 0; i < *interferNum; i++ {
+	// 		quit <- true
+	// 	}
+	// }
 	log.Info("All Create Snapshot threads have finished or exited ...")
 	// time.Sleep(5*time.Second)//wait for function to finish
-	
 
 	if *dumpMetrics {
 		var upfMetrics = make([]*metrics.Metric, *parallelNum)
@@ -541,7 +544,14 @@ func TestSequentialCSS(t *testing.T) {
 		if *sameCtImg {
 			diff_or_same = "same"
 		}
-		filePath := fmt.Sprintf("./test_diffCSSNC/%d_%d_%d_%s.csv" , *parallelNum, *interferNum, *writeBW, diff_or_same)
+
+		// Todo: Comment below line once done with FIO experiment
+		// filePath := fmt.Sprintf("./test_diffCSSNC/fio/fsync/%d_%d_%d_%s.csv", *parallelNum, *interferNum, *writeBW, diff_or_same)
+		filePath := fmt.Sprintf("./test_diffCSSNC/fio/ideal.csv")
+
+		// Todo: Uncomment below, after finishing FIO experiment
+		// filePath := fmt.Sprintf("./test_diffCSSNC/8GB/%d_%d_%d_%s.csv" , *parallelNum, *interferNum, *writeBW, diff_or_same)
+
 		// if !*sameCtImg {
 		// 	filePath = fmt.Sprintf("./test_diffCSSNC/%d_%d_%d.csv" , *parallelNum, *interferNum, *writeBW)
 		// }
@@ -556,7 +566,7 @@ func TestSequentialCSS(t *testing.T) {
 	}
 
 	killpidstatCmd := "/home/cc/vHive/ctriface/kill_running_tools.sh"
-	exec.Command("/bin/bash", "-c", killpidstatCmd).Start()
+	exec.Command("/bin/bash", "-c", killpidstatCmd).Run()
 }
 
 func TestOnlyCSS(t *testing.T) {
@@ -660,7 +670,7 @@ func TestOnlyCSS(t *testing.T) {
 	// 	log.Info("throttling to ", maxWriteBWByte)
 	// 	throttleIoMaxCmd := fmt.Sprintf("echo \"8:0 wbps=%d\" | sudo tee /sys/fs/cgroup/test/io.max", maxWriteBWByte)
 	// 	exec.Command("/bin/bash", "-c", throttleIoMaxCmd).Start()
-	// 	// put createss pid(s) into procs 
+	// 	// put createss pid(s) into procs
 	// 	for i := 0; i < *interferNum; i++ {
 	// 		log.Info("here: ", CreateSSInstancePid[i])
 	// 		throttlePidCmd := fmt.Sprintf("echo %s | sudo tee /sys/fs/cgroup/test/cgroup.procs", CreateSSInstancePid[i])
@@ -673,7 +683,6 @@ func TestOnlyCSS(t *testing.T) {
 	// 		fmt.Println(string(stdout))
 	// 	}
 	// }
-	
 
 	log.Info("Creating Seq Intf Snapshots ...")
 	var intfGroup sync.WaitGroup
@@ -694,7 +703,7 @@ func TestOnlyCSS(t *testing.T) {
 				// }
 				// require.NoError(t, err, "Failed to create directory for snapshot")
 				// var tStart = time.Now()
-				err :=orch.CreateSnapshot(ctx, vmID)
+				err := orch.CreateSnapshot(ctx, vmID)
 				// serveMetrics[i].MetricMap[metrics.CreateSnapshot] = metrics.ToUS(time.Since(tStart))
 				require.NoError(t, err, "Failed to create snapshot of VM, "+vmID)
 			}(i)
@@ -729,7 +738,6 @@ func TestOnlyCSS(t *testing.T) {
 	intfGroup.Wait()
 	log.Info("All Create Snapshot threads have finished or exited ...")
 	// time.Sleep(60*time.Second)
-	
 
 	// if *dumpMetrics {
 	// 	vmtouchExt := ""
