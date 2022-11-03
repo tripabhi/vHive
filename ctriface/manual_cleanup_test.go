@@ -46,7 +46,7 @@ var (
 	funcName            = flag.String("funcName", "helloworld", "Name of the function to benchmark")
 	snapFilePath        = flag.String("snapFilePath", "/fccd/snapshots", "path for snapshots")
 	writeBW             = flag.Int("writeBW", 99999, "maximum write BW in MB/s")
-	vmSize       uint32 = 8192
+	vmSize       uint32 = 4096
 	isVmTouch           = flag.Bool("isVmTouch", false, "preload the rootfs img and required metadata before createVM or not")
 	dumpMetrics         = flag.Bool("dumpMetrics", true, "dump metrics or not")
 	useNVMe             = flag.Bool("useNVMe", false, "use nvme or not")
@@ -393,9 +393,9 @@ func TestSequentialCSS(t *testing.T) {
 	defer orch.Cleanup()
 
 	// Pull image
-	// log.Info("pulling intf image now......")
-	// _, err := orch.getImage(ctx, testImageName)
-	// require.NoError(t, err, "Failed to pull image "+testImageName)
+	log.Info("pulling intf image now......")
+	_, err := orch.getImage(ctx, testImageName)
+	require.NoError(t, err, "Failed to pull image "+testImageName)
 	ImageName := testImageName
 	if !*sameCtImg {
 		ImageName = testImageNamePyaes
@@ -471,6 +471,7 @@ func TestSequentialCSS(t *testing.T) {
 		}
 	}
 	time.Sleep(100 * time.Millisecond)
+	// time.Sleep(100 * time.Second)
 
 	log.Info("Creating seq Snapshots ...")
 	// quit := make(chan bool)
@@ -499,9 +500,9 @@ func TestSequentialCSS(t *testing.T) {
 	// log.Info("Starting FIO Job ...")
 	// exec.Command("/bin/bash", "-c", "./run_fio.sh").Start()
 
-	// log.Info("Sleeping for 2s")
-	// // // wait for a few second to make sure intf doing disk write
-	// time.Sleep(2 * time.Second)
+	// log.Info("Sleeping for 15s")
+	// // wait for a few second to make sure intf doing disk write
+	// time.Sleep(15 * time.Second)
 
 	// start victim
 	log.Info("start victim VMs...")
@@ -546,8 +547,8 @@ func TestSequentialCSS(t *testing.T) {
 		}
 
 		// Todo: Comment below line once done with FIO experiment
-		// filePath := fmt.Sprintf("./test_diffCSSNC/fio/fsync/%d_%d_%d_%s.csv", *parallelNum, *interferNum, *writeBW, diff_or_same)
-		filePath := fmt.Sprintf("./test_diffCSSNC/fio/ideal.csv")
+		filePath := fmt.Sprintf("./test_diffCSSNC/re_confirm/%d_%d_%d_%s.csv", *parallelNum, *interferNum, *writeBW, diff_or_same)
+		// filePath := "./test_diffCSSNC/fio/ideal.csv"
 
 		// Todo: Uncomment below, after finishing FIO experiment
 		// filePath := fmt.Sprintf("./test_diffCSSNC/8GB/%d_%d_%d_%s.csv" , *parallelNum, *interferNum, *writeBW, diff_or_same)
@@ -565,6 +566,8 @@ func TestSequentialCSS(t *testing.T) {
 		fusePrintMetrics(t, serveMetrics, upfMetrics, &notUsingUpf, true, *funcName, filePath)
 	}
 
+	throttleIoMaxCmd := "echo \"8:0 wbps=max\" | sudo tee /sys/fs/cgroup/test/io.max"
+	exec.Command("/bin/bash", "-c", throttleIoMaxCmd).Run()
 	killpidstatCmd := "/home/cc/vHive/ctriface/kill_running_tools.sh"
 	exec.Command("/bin/bash", "-c", killpidstatCmd).Run()
 }

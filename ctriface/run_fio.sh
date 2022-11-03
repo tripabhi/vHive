@@ -14,7 +14,7 @@ function add_children_to_cgroup() {
 
 sudo fio --name=write_throughput --directory=$TEST_DIR --numjobs=1 \
     --size=8G --time_based --runtime=250s --ramp_time=2s --ioengine=libaio \
-    --direct=0 --verify=0 --end_fsync=1 --bs=4k --iodepth=32 --rw=write \
+    --direct=0 --verify=0 --end_fsync=0 --bs=4k --iodepth=32 --rw=write \
     --group_reporting=1 & FIO_PID=$!
 
 # --output=$RESULT_DIR/fio_stats
