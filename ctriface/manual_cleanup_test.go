@@ -547,7 +547,7 @@ func TestSequentialCSS(t *testing.T) {
 		}
 
 		// Todo: Comment below line once done with FIO experiment
-		filePath := fmt.Sprintf("./test_diffCSSNC/re_confirm/%d_%d_%d_%s.csv", *parallelNum, *interferNum, *writeBW, diff_or_same)
+		filePath := fmt.Sprintf("./test_diffCSSNC/json_serdes/%d_%d_%d_%s.csv", *parallelNum, *interferNum, *writeBW, diff_or_same)
 		// filePath := "./test_diffCSSNC/fio/ideal.csv"
 
 		// Todo: Uncomment below, after finishing FIO experiment

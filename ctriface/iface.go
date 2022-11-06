@@ -67,7 +67,7 @@ type StartVMResponse struct {
 }
 
 const (
-	testImageName = "ghcr.io/ease-lab/helloworld:var_workload"
+	testImageName = "ghcr.io/ease-lab/json_serdes:var_workload"
 	testImageNamePyaes = "ghcr.io/ease-lab/pyaes:var_workload"
 )
 
