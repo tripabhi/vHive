@@ -23,6 +23,7 @@
 package ctriface
 
 import (
+	"bufio"
 	"context"
 	"fmt"
 	"net"
@@ -30,6 +31,7 @@ import (
 	"net/url"
 	"os"
 	"os/exec"
+	"strconv"
 	"strings"
 	"sync"
 	"syscall"
@@ -50,10 +52,10 @@ import (
 	_ "google.golang.org/grpc/codes"  //tmp
 	_ "google.golang.org/grpc/status" //tmp
 
+	"github.com/go-multierror/multierror"
 	"github.com/vhive-serverless/vhive/memory/manager"
 	"github.com/vhive-serverless/vhive/metrics"
 	"github.com/vhive-serverless/vhive/misc"
-	"github.com/go-multierror/multierror"
 
 	_ "github.com/davecgh/go-spew/spew" //tmp
 )
@@ -67,7 +69,8 @@ type StartVMResponse struct {
 }
 
 const (
-	testImageName = "ghcr.io/ease-lab/pyaes:var_workload"
+	// testImageName = "ghcr.io/ease-lab/helloworld:var_workload"
+	testImageName = "docker.io/vhiveease/video-analytics-recog:latest"
 	testImageNamePyaes = "ghcr.io/ease-lab/pyaes:var_workload"
 )
 
@@ -106,6 +109,7 @@ func (o *Orchestrator) StartVM(ctx context.Context, vmID, imageName string, vmSi
 	// startVMMetric.MetricMap[metrics.GetImage] = metrics.ToUS(time.Since(tStart))
 
 	log.Info("FcCreateVM for vmid: ", vmID)
+	readInSectorBeforeRun, writeInSectorBeforeRun := getDiskStats()
 	tStart = time.Now()
 	conf := o.getVMConfig(vm)
 	resp, err := o.fcClient.CreateVM(ctx, conf)
@@ -115,6 +119,10 @@ func (o *Orchestrator) StartVM(ctx context.Context, vmID, imageName string, vmSi
 	}
 	FCPid := resp.GetFirecrackerPID()
 	response = &StartVMResponse{GuestIP: vm.Ni.PrimaryAddress, FCPid: FCPid}
+
+	readInSectorAfterRun, writeInSectorAfterRun := getDiskStats()
+	log.Info("Read in MB: ", (readInSectorAfterRun - readInSectorBeforeRun)*512/1024/1024)
+	log.Info("Write in MB: ", (writeInSectorAfterRun - writeInSectorBeforeRun)*512/1024/1024)
 
 	defer func() {
 		if retErr != nil {
@@ -167,7 +175,8 @@ func (o *Orchestrator) StartVM(ctx context.Context, vmID, imageName string, vmSi
 	defer func() {
 		if retErr != nil {
 			if _, err := task.Delete(ctx); err != nil {
-				logger.WithError(err).Errorf("failed to delete task after failure")
+				// logger.WithError(err).Errorf("failed to delete task after failure")
+				log.Info("failed to delete task after failure")
 			}
 		}
 	}()
@@ -185,10 +194,13 @@ func (o *Orchestrator) StartVM(ctx context.Context, vmID, imageName string, vmSi
 	defer func() {
 		if retErr != nil {
 			if err := task.Kill(ctx, syscall.SIGKILL); err != nil {
-				logger.WithError(err).Errorf("failed to kill task after failure")
+				// logger.WithError(err).Errorf("failed to kill task after failure")
+				log.Info("failed to kill task after failure")
 			}
 		}
 	}()
+	// get disk stats before run
+	
 
 	// logger.Debug("StartVM: Starting the task")
 	log.Info("TaskStart for vmid: ", vmID)
@@ -198,10 +210,34 @@ func (o *Orchestrator) StartVM(ctx context.Context, vmID, imageName string, vmSi
 	}
 	startVMMetric.MetricMap[metrics.TaskStart] = metrics.ToUS(time.Since(tStart))
 
+	// sleep for a lil bit to see the logs
+	time.Sleep(10 * time.Second)
+
+	// kill the process and get the exit status
+	log.Info("killing task...")
+	if err := task.Kill(ctx, syscall.SIGKILL); err != nil {
+		log.Info("Error killing task!")
+	}
+
+	// wait for the process to fully exit and print out the exit status
+
+	log.Info("waiting for signal")
+	status := <-ch
+	log.Info("Getting the code...")
+	code, _, err := status.Result()
+	if err != nil {
+		logger.WithError(err).Errorf("failed to kill task after failure")
+	}
+	log.Info("Exited with status: ", code)
+	
+	// get disk stats after run
+	
+
 	defer func() {
 		if retErr != nil {
 			if err := task.Kill(ctx, syscall.SIGKILL); err != nil {
 				logger.WithError(err).Errorf("failed to kill task after failure")
+				log.Info("failed to kill task after failure")
 			}
 		}
 	}()
@@ -234,6 +270,28 @@ func (o *Orchestrator) StartVM(ctx context.Context, vmID, imageName string, vmSi
 
 	// return &StartVMResponse{GuestIP: vm.Ni.PrimaryAddress}, startVMMetric, nil
 	return response, startVMMetric, nil
+}
+
+func getDiskStats() (readInSector, writeInSector float64) {
+	getDiskstatsCmd := "cat /proc/diskstats | grep sda"
+	getDiskstatsOutput, err := exec.Command("/bin/bash", "-c", getDiskstatsCmd).Output()
+	if err != nil {
+		return
+	}
+	diskstatsStr := string(getDiskstatsOutput)
+	scanner := bufio.NewScanner(strings.NewReader(diskstatsStr))
+	var firstLine string
+	for scanner.Scan() {
+		firstLine = scanner.Text()
+		// fmt.Println(firstLine)
+		break
+	}
+	words := strings.Fields(firstLine)
+	readsInSector, _ := strconv.Atoi(words[5])
+	writesInSector, _ := strconv.Atoi(words[9])
+	// log.Info(readsInSector)
+	// log.Info(writesInSector)
+	return float64(readsInSector), float64(writesInSector)
 }
 
 // StopSingleVM Shuts down a VM
@@ -347,6 +405,7 @@ func (o *Orchestrator) getImage(ctx context.Context, imageName string) (*contain
 			)
 		} else {
 			// Pull remote image
+			log.Info("pulling remote image: ", imageURL)
 			image, err = o.client.Pull(ctx, imageURL,
 				containerd.WithPullUnpack,
 				containerd.WithPullSnapshotter(o.snapshotter),

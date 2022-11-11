@@ -3,7 +3,8 @@ import pandas as pd
 import sys
 
 infile_prefix = sys.argv[1]
-with open('./BW_logs/iostat_' + infile_prefix + '.json') as f:
+base_dir = './BW_logs/1024_concurrent_CSS/'
+with open(base_dir + 'iostat_' + infile_prefix + '.json') as f:
    data = json.load(f)
 
 # print(data)
@@ -39,4 +40,4 @@ print(disk_write)
 # dict = {'Timestamp': timestamp, }
 dict = {'Timestamp': timestamp, 'user': user, 'system': system, 'iowait': iowait, 'Total CPU': total, 'iostat read (MB/s)': disk_read, 'iostat write (MB/s)': disk_write}
 df = pd.DataFrame(dict)
-df.to_csv('./BW_logs/iostat_' + infile_prefix + ".csv", index=False)
+df.to_csv(base_dir + 'iostat_' + infile_prefix + ".csv", index=False)

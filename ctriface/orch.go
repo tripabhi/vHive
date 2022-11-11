@@ -26,10 +26,10 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
-	"syscall"
-	"time"
 	"strings"
 	"sync"
+	"syscall"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 
@@ -155,9 +155,9 @@ func (o *Orchestrator) setupCloseHandler() {
 func (o *Orchestrator) Cleanup() {
 	o.vmPool.RemoveBridges()
 	log.Info("Remove bridges done!")
-	if err := os.RemoveAll(o.snapshotsDir); err != nil {
-		log.Panic("failed to delete snapshots dir", err)
-	}
+	// if err := os.RemoveAll(o.snapshotsDir); err != nil {
+	// 	log.Panic("failed to delete snapshots dir", err)
+	// }
 }
 
 // GetSnapshotsEnabled Returns the snapshots mode of the orchestrator

@@ -83,8 +83,8 @@ test-seqCSS:
 	sudo env "PATH=$(PATH)" go test $(EXTRAGOARGS) -run TestSequentialCSS -args $(WITHUPF) \
 	-writeBW=$(writeBW) -isVmTouch=$(isVmTouch) -dumpMetrics=$(dumpMetrics) \
 	-parallelNum=$(parallelNum) -interferNum=$(interferNum) -sameCtImg=$(sameCtImg) \
-	# & sudo iotop -d 0.1 -t -o -k > ./BW_logs/iotop_$(parallelNum)_$(interferNum)_$(writeBW).log \
-	# & iostat -m -t 1 -p sda -c -o JSON > ./BW_logs/iostat_$(parallelNum)_$(interferNum)_$(writeBW).json
+	# & sudo iotop -d 0.1 -t -o -k > ./BW_logs/1024_concurrent_CSS/iotop_$(parallelNum)_$(interferNum)_$(writeBW).log \
+	# & iostat -m -t 1 -p sda -c -o JSON > ./BW_logs/1024_concurrent_CSS/iostat_$(parallelNum)_$(interferNum)_$(writeBW).json
 	# python3 /home/cc/vhive/ctriface/get_iostat.py ./Seq_CreateSS_$(parallelNum)_$(interferNum)/iostat_$(parallelNum)_$(interferNum)
 	# python3 /home/cc/vhive/ctriface/get_iotop.py ./Seq_CreateSS_$(parallelNum)_$(interferNum)/iotop_$(parallelNum)_$(interferNum)
 	./kill_running_tools.sh

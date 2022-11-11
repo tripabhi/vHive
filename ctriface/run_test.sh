@@ -1,14 +1,14 @@
-for parallelNum in 1 2 4 8 16
+for parallelNum in 1
 do
-   for writeBW in 99999
+   for writeBW in 100
    do
-      for interferNum in 1 2 4 8
+      for interferNum in 1 4 8 16
       do
-         for i in {1..8}
+         for i in {1..10}
          do
-            make test-seqCSS parallelNum=$parallelNum writeBW=$writeBW interferNum=$interferNum sameCtImg=true
+            make test-seqCSS parallelNum=$parallelNum writeBW=$writeBW interferNum=$interferNum
             echo "finished $w $i run"
-            sleep 2
+            sleep 10
             # echo $w $i
          done
       done

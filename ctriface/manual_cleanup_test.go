@@ -46,7 +46,7 @@ var (
 	funcName    = flag.String("funcName", "helloworld", "Name of the function to benchmark")
 	snapFilePath= flag.String("snapFilePath", "/fccd/snapshots", "path for snapshots")
 	writeBW		= flag.Int("writeBW", 99999, "maximum write BW in MB/s")
-	vmSize uint32 = 256
+	vmSize uint32 = 1024
 	isVmTouch	= flag.Bool("isVmTouch", false, "preload the rootfs img and required metadata before createVM or not")
 	dumpMetrics = flag.Bool("dumpMetrics", true, "dump metrics or not")
 	useNVMe		= flag.Bool("useNVMe", false, "use nvme or not")
@@ -348,7 +348,7 @@ func TestParallelPhasedSnapLoad(t *testing.T) {
 func TestSequentialCSS(t *testing.T) {
 	var (
 		serveMetrics = make([]*metrics.Metric, *parallelNum)//intf:8 parallelNum:1
-		CreateSSInstancePid = make([]string, *interferNum)
+		
 	)
 	for i := 0; i < *parallelNum; i++ {
 		serveMetrics[i] = metrics.NewMetric()
@@ -406,11 +406,17 @@ func TestSequentialCSS(t *testing.T) {
 	
 	// log.Info("pull complete, starting Victim VM ...")
 
-
+	var dummyInterferon int
 	log.Info("Starting Intf VM ...")
-	{
+	
 		var vmGroup sync.WaitGroup
-		for i := 0; i < *interferNum; i++ {
+		if *interferNum == 0 {
+			dummyInterferon = 1
+		} else {
+			dummyInterferon = *interferNum
+		}
+		var CreateSSInstancePid = make([]string, dummyInterferon)
+		for i := 0; i < dummyInterferon; i++ {
 			vmGroup.Add(1)
 			go func(i int) {
 				defer vmGroup.Done()
@@ -429,12 +435,12 @@ func TestSequentialCSS(t *testing.T) {
 			}(i)
 		}
 		vmGroup.Wait()
-	}
+	
 
 	log.Info("Pausing Intf VM ...")
 	{
 		var vmGroup sync.WaitGroup
-		for i := 0; i < *interferNum; i++ {
+		for i := 0; i < dummyInterferon; i++ {
 			vmGroup.Add(1)
 			go func(i int) {
 				defer vmGroup.Done()
@@ -473,27 +479,32 @@ func TestSequentialCSS(t *testing.T) {
 	}
 
 	log.Info("Creating Seq Intf Snapshots ...")
-	quit := make(chan bool)
-	for i := 0; i < *interferNum; i++ {
-		go func(i int) {
-			vmID := fmt.Sprintf("%d", i+vmIDBase)
-			err := orch.InfiniteCreateSnapshot(quit, ctx, vmID)
-			require.NoError(t, err, "Failed to create snapshot of VM, "+vmID)
-		}(i)
-	}
-	// var intfGroup sync.WaitGroup
-	// {
-	// 	for i := 0; i < *interferNum; i++ {
-	// 		intfGroup.Add(1)
-	// 		go func(i int) {
-	// 			defer intfGroup.Done()
-	// 			vmID := fmt.Sprintf("%d", i+vmIDBase)
-	// 			err := orch.CreateSnapshot(ctx, vmID)
-	// 			// // serveMetrics[i].MetricMap[metrics.CreateSnapshot] = metrics.ToUS(time.Since(tStart))
-	// 			require.NoError(t, err, "Failed to create snapshot of VM, "+vmID)
-	// 		}(i)
-	// 	}
+	// quit := make(chan bool)
+	// for i := 0; i < *interferNum; i++ {
+	// 	go func(i int) {
+	// 		vmID := fmt.Sprintf("%d", i+vmIDBase)
+	// 		err := orch.InfiniteCreateSnapshot(quit, ctx, vmID)
+	// 		require.NoError(t, err, "Failed to create snapshot of VM, "+vmID)
+	// 	}(i)
 	// }
+	readInSectorBeforeRun, writeInSectorBeforeRun := getDiskStats()
+
+	var intfGroup sync.WaitGroup
+	if *interferNum != 0  {
+		{
+			for i := 0; i < *interferNum; i++ {
+				intfGroup.Add(1)
+				go func(i int) {
+					defer intfGroup.Done()
+					vmID := fmt.Sprintf("%d", i+vmIDBase)
+					err := orch.CreateSnapshot(ctx, vmID)
+					// // serveMetrics[i].MetricMap[metrics.CreateSnapshot] = metrics.ToUS(time.Since(tStart))
+					require.NoError(t, err, "Failed to create snapshot of VM, "+vmID)
+					log.Info("CSS finish!!!")
+				}(i)
+			}
+		}
+	}
 
 	// wait for a few second to make sure intf doing disk write
 	// time.Sleep(4*time.Second)
@@ -503,7 +514,7 @@ func TestSequentialCSS(t *testing.T) {
 	log.Info("start victim VMs...")
 	{
 		var victimGroup sync.WaitGroup
-		for i := *interferNum; i < *interferNum+vmNum; i++ {
+		for i := dummyInterferon; i < dummyInterferon+vmNum; i++ {
 			victimGroup.Add(1)
 			go func(i, x int) {
 				defer victimGroup.Done()
@@ -519,19 +530,22 @@ func TestSequentialCSS(t *testing.T) {
 					}
 				}
 				require.NoError(t, err, "Failed to start VM, "+victimID)
-			}(i, i-*interferNum)
+			}(i, i-dummyInterferon)
 		}
 		victimGroup.Wait()
 	}
 
 	log.Info("Start VM Finishes here ...")
-	// intfGroup.Wait()
-	if *interferNum != 0 {
-		for i := 0; i < *interferNum; i++ {
-			quit <- true
-		}
-	}
+	intfGroup.Wait()
+	// if *interferNum != 0 {
+	// 	for i := 0; i < *interferNum; i++ {
+	// 		quit <- true
+	// 	}
+	// }
 	log.Info("All Create Snapshot threads have finished or exited ...")
+	readInSectorAfterRun, writeInSectorAfterRun := getDiskStats()
+	log.Info("Read duing CSS in MB: ", (readInSectorAfterRun - readInSectorBeforeRun)*512/1024/1024)
+	log.Info("Write duing CSS in MB: ", (writeInSectorAfterRun - writeInSectorBeforeRun)*512/1024/1024)
 	// time.Sleep(5*time.Second)//wait for function to finish
 	
 
@@ -541,7 +555,7 @@ func TestSequentialCSS(t *testing.T) {
 		if *sameCtImg {
 			diff_or_same = "same"
 		}
-		filePath := fmt.Sprintf("./test_diffCSSNC/%d_%d_%d_%s.csv" , *parallelNum, *interferNum, *writeBW, diff_or_same)
+		filePath := fmt.Sprintf("./test_diffCSSNC/1024_concurrent_CSS/%d_%d_%d_%s.csv" , *parallelNum, *interferNum, *writeBW, diff_or_same)
 		// if !*sameCtImg {
 		// 	filePath = fmt.Sprintf("./test_diffCSSNC/%d_%d_%d.csv" , *parallelNum, *interferNum, *writeBW)
 		// }

@@ -4,11 +4,12 @@ import re
 import pandas as pd
 import csv
 
-resultDir = "./test_diffCSSNC"
+resultDir = "./test_diffCSSNC/1024_concurrent_CSS"
 os.chdir(resultDir+"/")
 all_rows = []
-col_name = ["ExpEnv", "FcCreateVM", "FcCreateVMStd", \
-            "NewContainer", "NewContainerStd", "NewTask", "NewTaskStd", \
+col_name = ["ExpEnv", "FcCreateVM", "FcCreateVMStd", "FcCreateVMMin", "FcCreateVMMax", \
+            "NewContainer", "NewContainerStd", "NewContainerMin", "NewContainerMax", \
+            "NewTask", "NewTaskStd", \
             "TaskStart", "TaskStartStd", \
             "TaskWait", "TaskWaitStd", "Total", "TotalStd"]
 for file in glob.glob("*.csv"):
@@ -23,6 +24,7 @@ for file in glob.glob("*.csv"):
     cur_csv_df['TaskStart'] = cur_csv_df['TaskStart'].div(1000).round(3)
     cur_csv_df['TaskWait'] = cur_csv_df['TaskWait'].div(1000).round(3)
     cur_csv_df['Total'] = cur_csv_df['Total'].div(1000).round(3)
+
     # get mean
     FcCreateVMMean = cur_csv_df["FcCreateVM"].mean().round(0)
     # GetImageMean = cur_csv_df["GetImage"].mean().round(0)
@@ -32,6 +34,7 @@ for file in glob.glob("*.csv"):
     TaskStartMean = cur_csv_df["TaskStart"].mean().round(0)
     TaskWaitMean = cur_csv_df["TaskWait"].mean().round(0)
     TotalMean = cur_csv_df["Total"].mean().round(0)
+
     # get std
     FcCreateVMStd = cur_csv_df["FcCreateVM"].std().round(0)
     # GetImageStd = cur_csv_df["GetImage"].std().round(0)
@@ -42,8 +45,15 @@ for file in glob.glob("*.csv"):
     TaskWaitStd = cur_csv_df["TaskWait"].std().round(0)
     TotalStd = cur_csv_df["Total"].std().round(0)
 
-    cur_csv_row = [cur_csv_prefix, FcCreateVMMean, FcCreateVMStd, \
-                    NewContainerMean, NewContainerStd, NewTaskMean, NewTaskStd, \
+    #get min and max
+    FcCreateVMMin = cur_csv_df["FcCreateVM"].min().round(0)
+    FcCreateVMMax = cur_csv_df["FcCreateVM"].max().round(0)
+    NewContainerMin = cur_csv_df["NewContainer"].min().round(0)
+    NewContainerMax = cur_csv_df["NewContainer"].max().round(0)
+
+    cur_csv_row = [cur_csv_prefix, FcCreateVMMean, FcCreateVMStd, FcCreateVMMin, FcCreateVMMax, \
+                    NewContainerMean, NewContainerStd, NewContainerMin, NewContainerMax, \
+                    NewTaskMean, NewTaskStd, \
                     TaskStartMean, TaskStartStd, \
                     TaskWaitMean, TaskWaitStd, TotalMean, TotalStd]
     print(cur_csv_prefix, ":", cur_csv_row)

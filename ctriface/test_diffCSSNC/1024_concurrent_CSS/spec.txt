@@ -1,0 +1,5 @@
+vmSize=1GB for interferon
+
+Concurrent CSS in the Background, but each just do 1 CSS
+
+Image: vhiveease/video-analytics-recog:latest

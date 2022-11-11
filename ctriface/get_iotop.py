@@ -4,13 +4,14 @@ import pandas as pd
 import sys
 
 infile_prefix = sys.argv[1]
+base_dir = './BW_logs/1024_concurrent_CSS/'
 
 disk_write_phrase = "Current DISK WRITE: "
 disk_read_phrase = "Current DISK READ: "
 write_bw_all = []
 read_bw_all = []
 timestamp_all = []
-with open('./BW_logs/iotop_' + infile_prefix + '.log', "r") as f:
+with open(base_dir + 'iotop_' + infile_prefix + '.log', "r") as f:
     for line in f:
         if disk_write_phrase in line:
             # start = line.index(disk_write_phrase)+ len(disk_write_phrase)
@@ -32,4 +33,4 @@ print(len(write_bw_all))
 # fields = ['Timestamp', 'Disk Read (MB/s)', 'Disk Write (MB/s)']
 dict = {'Timestamp': timestamp_all, 'iotop read (MB/s)': read_bw_all, 'iotop write (MB/s)': write_bw_all}
 df = pd.DataFrame(dict)
-df.to_csv('./BW_logs/iotop_' + infile_prefix + ".csv", index=False)
+df.to_csv(base_dir + 'iotop_' + infile_prefix + ".csv", index=False)
