@@ -30,8 +30,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/vhive-serverless/vhive/ctriface"
 	log "github.com/sirupsen/logrus"
+	"github.com/vhive-serverless/vhive/ctriface"
 )
 
 type coordinator struct {

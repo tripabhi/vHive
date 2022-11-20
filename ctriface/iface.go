@@ -69,13 +69,168 @@ type StartVMResponse struct {
 }
 
 const (
-	// testImageName = "ghcr.io/ease-lab/helloworld:var_workload"
-	testImageName = "docker.io/vhiveease/video-analytics-recog:latest"
+	testImageName = "ghcr.io/ease-lab/helloworld:var_workload"
+	// testImageName = "docker.io/vhiveease/video-analytics-decoder:latest"
 	testImageNamePyaes = "ghcr.io/ease-lab/pyaes:var_workload"
 )
 
 // StartVM Boots a VM if it does not exist
-func (o *Orchestrator) StartVM(ctx context.Context, vmID, imageName string, vmSize, vCPUCount uint32) (response *StartVMResponse, _ *metrics.Metric, retErr error) {
+func (o *Orchestrator) StartVM(ctx context.Context, vmID, imageName string) (_ *StartVMResponse, _ *metrics.Metric, retErr error) {
+	var (
+		startVMMetric *metrics.Metric = metrics.NewMetric()
+		tStart        time.Time
+	)
+
+	logger := log.WithFields(log.Fields{"vmID": vmID, "image": imageName})
+	logger.Debug("StartVM: Received StartVM")
+
+	vm, err := o.vmPool.Allocate(vmID, o.hostIface)
+	if err != nil {
+		logger.Error("failed to allocate VM in VM pool")
+		return nil, nil, err
+	}
+
+	defer func() {
+		// Free the VM from the pool if function returns error
+		if retErr != nil {
+			if err := o.vmPool.Free(vmID); err != nil {
+				logger.WithError(err).Errorf("failed to free VM from pool after failure")
+			}
+		}
+	}()
+
+	ctx = namespaces.WithNamespace(ctx, namespaceName)
+	tStart = time.Now()
+	if vm.Image, err = o.getImage(ctx, imageName); err != nil {
+		return nil, nil, errors.Wrapf(err, "Failed to get/pull image")
+	}
+	startVMMetric.MetricMap[metrics.GetImage] = metrics.ToUS(time.Since(tStart))
+
+	tStart = time.Now()
+	conf := o.getVMConfig(vm)
+	resp, err := o.fcClient.CreateVM(ctx, conf)
+	startVMMetric.MetricMap[metrics.FcCreateVM] = metrics.ToUS(time.Since(tStart))
+	if err != nil {
+		return nil, nil, errors.Wrap(err, "failed to create the microVM in firecracker-containerd")
+	}
+
+	defer func() {
+		if retErr != nil {
+			if _, err := o.fcClient.StopVM(ctx, &proto.StopVMRequest{VMID: vmID}); err != nil {
+				logger.WithError(err).Errorf("failed to stop firecracker-containerd VM after failure")
+			}
+		}
+	}()
+
+	logger.Debug("StartVM: Creating a new container")
+	tStart = time.Now()
+	container, err := o.client.NewContainer(
+		ctx,
+		vmID,
+		containerd.WithSnapshotter(o.snapshotter),
+		containerd.WithNewSnapshot(vmID, *vm.Image),
+		containerd.WithNewSpec(
+			oci.WithImageConfig(*vm.Image),
+			firecrackeroci.WithVMID(vmID),
+			firecrackeroci.WithVMNetwork,
+		),
+		containerd.WithRuntime("aws.firecracker", nil),
+	)
+	startVMMetric.MetricMap[metrics.NewContainer] = metrics.ToUS(time.Since(tStart))
+	vm.Container = &container
+	if err != nil {
+		return nil, nil, errors.Wrap(err, "failed to create a container")
+	}
+
+	defer func() {
+		if retErr != nil {
+			if err := container.Delete(ctx, containerd.WithSnapshotCleanup); err != nil {
+				logger.WithError(err).Errorf("failed to delete container after failure")
+			}
+		}
+	}()
+
+	iologger := NewWorkloadIoWriter(vmID)
+	o.workloadIo.Store(vmID, &iologger)
+	logger.Debug("StartVM: Creating a new task")
+	tStart = time.Now()
+	task, err := container.NewTask(ctx, cio.NewCreator(cio.WithStreams(os.Stdin, iologger, iologger)))
+	startVMMetric.MetricMap[metrics.NewTask] = metrics.ToUS(time.Since(tStart))
+	vm.Task = &task
+	if err != nil {
+		return nil, nil, errors.Wrapf(err, "failed to create a task")
+	}
+
+	defer func() {
+		if retErr != nil {
+			if _, err := task.Delete(ctx); err != nil {
+				logger.WithError(err).Errorf("failed to delete task after failure")
+			}
+		}
+	}()
+
+	logger.Debug("StartVM: Waiting for the task to get ready")
+	tStart = time.Now()
+	ch, err := task.Wait(ctx)
+	startVMMetric.MetricMap[metrics.TaskWait] = metrics.ToUS(time.Since(tStart))
+	vm.TaskCh = ch
+	if err != nil {
+		return nil, nil, errors.Wrap(err, "failed to wait for a task")
+	}
+
+	defer func() {
+		if retErr != nil {
+			if err := task.Kill(ctx, syscall.SIGKILL); err != nil {
+				logger.WithError(err).Errorf("failed to kill task after failure")
+			}
+		}
+	}()
+
+	logger.Debug("StartVM: Starting the task")
+	tStart = time.Now()
+	if err := task.Start(ctx); err != nil {
+		return nil, nil, errors.Wrap(err, "failed to start a task")
+	}
+	startVMMetric.MetricMap[metrics.TaskStart] = metrics.ToUS(time.Since(tStart))
+
+	defer func() {
+		if retErr != nil {
+			if err := task.Kill(ctx, syscall.SIGKILL); err != nil {
+				logger.WithError(err).Errorf("failed to kill task after failure")
+			}
+		}
+	}()
+
+	if err := os.MkdirAll(o.getVMBaseDir(vmID), 0777); err != nil {
+		logger.Error("Failed to create VM base dir")
+		return nil, nil, err
+	}
+	if o.GetUPFEnabled() {
+		logger.Debug("Registering VM with the memory manager")
+
+		stateCfg := manager.SnapshotStateCfg{
+			VMID:             vmID,
+			GuestMemPath:     o.getMemoryFile(vmID),
+			BaseDir:          o.getVMBaseDir(vmID),
+			GuestMemSize:     int(conf.MachineCfg.MemSizeMib) * 1024 * 1024,
+			IsLazyMode:       o.isLazyMode,
+			VMMStatePath:     o.getSnapshotFile(vmID),
+			WorkingSetPath:   o.getWorkingSetFile(vmID),
+			InstanceSockAddr: resp.UPFSockPath,
+		}
+		if err := o.memoryManager.RegisterVM(stateCfg); err != nil {
+			return nil, nil, errors.Wrap(err, "failed to register VM with memory manager")
+			// NOTE (Plamen): Potentially need a defer(DeregisteVM) here if RegisterVM is not last to execute
+		}
+	}
+
+	logger.Debug("Successfully started a VM")
+
+	return &StartVMResponse{GuestIP: vm.Ni.PrimaryAddress}, startVMMetric, nil
+}
+
+// StartVM Boots a VM if it does not exist
+func (o *Orchestrator) StartVMModified(ctx context.Context, vmID, imageName string, vmSize, vCPUCount uint32) (response *StartVMResponse, _ *metrics.Metric, retErr error) {
 	var (
 		startVMMetric *metrics.Metric = metrics.NewMetric()
 		tStart        time.Time
@@ -120,9 +275,6 @@ func (o *Orchestrator) StartVM(ctx context.Context, vmID, imageName string, vmSi
 	FCPid := resp.GetFirecrackerPID()
 	response = &StartVMResponse{GuestIP: vm.Ni.PrimaryAddress, FCPid: FCPid}
 
-	readInSectorAfterRun, writeInSectorAfterRun := getDiskStats()
-	log.Info("Read in MB: ", (readInSectorAfterRun - readInSectorBeforeRun)*512/1024/1024)
-	log.Info("Write in MB: ", (writeInSectorAfterRun - writeInSectorBeforeRun)*512/1024/1024)
 
 	defer func() {
 		if retErr != nil {
@@ -231,7 +383,9 @@ func (o *Orchestrator) StartVM(ctx context.Context, vmID, imageName string, vmSi
 	log.Info("Exited with status: ", code)
 	
 	// get disk stats after run
-	
+	readInSectorAfterRun, writeInSectorAfterRun := getDiskStats()
+	log.Info("Read in MB: ", (readInSectorAfterRun - readInSectorBeforeRun)*512/1024/1024)
+	log.Info("Write in MB: ", (writeInSectorAfterRun - writeInSectorBeforeRun)*512/1024/1024)
 
 	defer func() {
 		if retErr != nil {

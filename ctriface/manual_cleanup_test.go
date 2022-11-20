@@ -24,6 +24,7 @@ package ctriface
 
 import (
 	"context"
+	"encoding/csv"
 	"fmt"
 	"os"
 	"sync"
@@ -46,7 +47,7 @@ var (
 	funcName    = flag.String("funcName", "helloworld", "Name of the function to benchmark")
 	snapFilePath= flag.String("snapFilePath", "/fccd/snapshots", "path for snapshots")
 	writeBW		= flag.Int("writeBW", 99999, "maximum write BW in MB/s")
-	vmSize uint32 = 1024
+	vmSize uint32 = 256
 	isVmTouch	= flag.Bool("isVmTouch", false, "preload the rootfs img and required metadata before createVM or not")
 	dumpMetrics = flag.Bool("dumpMetrics", true, "dump metrics or not")
 	useNVMe		= flag.Bool("useNVMe", false, "use nvme or not")
@@ -54,8 +55,13 @@ var (
 	isUPFEnabled = flag.Bool("upf", false, "isUPFEnabled or not")
 	isLazyMode = flag.Bool("lazy", false, "isLazyMode or not")
 )
+type IOWithTime struct {
+    curTime time.Time
+	curRead float64
+    curWrite float64
+}
 
-func TestSnapLoadOnlyOne(t *testing.T) {
+func TestSnapLoad(t *testing.T) {
 	// Need to clean up manually after this test because StopVM does not
 	// work for stopping machines which are loaded from snapshots yet
 	log.SetFormatter(&log.TextFormatter{
@@ -82,7 +88,7 @@ func TestSnapLoadOnlyOne(t *testing.T) {
 
 	vmID := "1"
 
-	_, _, err := orch.StartVM(ctx, vmID, testImageName, vmSize, 1)
+	_, _, err := orch.StartVM(ctx, vmID, testImageName)
 	require.NoError(t, err, "Failed to start VM")
 
 	err = orch.PauseVM(ctx, vmID)
@@ -132,7 +138,7 @@ func TestSnapLoadMultiple(t *testing.T) {
 
 	vmID := "3"
 
-	_, _, err := orch.StartVM(ctx, vmID, testImageName, vmSize, 1)
+	_, _, err := orch.StartVM(ctx, vmID, testImageName)
 	require.NoError(t, err, "Failed to start VM")
 
 	err = orch.PauseVM(ctx, vmID)
@@ -203,7 +209,7 @@ func TestParallelSnapLoad(t *testing.T) {
 			defer vmGroup.Done()
 			vmID := fmt.Sprintf("%d", i+vmIDBase)
 
-			_, _, err := orch.StartVM(ctx, vmID, testImageName, vmSize, 1)
+			_, _, err := orch.StartVM(ctx, vmID, testImageName)
 			require.NoError(t, err, "Failed to start VM, "+vmID)
 
 			err = orch.PauseVM(ctx, vmID)
@@ -265,7 +271,7 @@ func TestParallelPhasedSnapLoad(t *testing.T) {
 			go func(i int) {
 				defer vmGroup.Done()
 				vmID := fmt.Sprintf("%d", i+vmIDBase)
-				_, _, err := orch.StartVM(ctx, vmID, testImageName, vmSize, 1)
+				_, _, err := orch.StartVM(ctx, vmID, testImageName)
 				require.NoError(t, err, "Failed to start VM, "+vmID)
 			}(i)
 		}
@@ -345,6 +351,7 @@ func TestParallelPhasedSnapLoad(t *testing.T) {
 	orch.Cleanup()
 }
 
+
 func TestSequentialCSS(t *testing.T) {
 	var (
 		serveMetrics = make([]*metrics.Metric, *parallelNum)//intf:8 parallelNum:1
@@ -422,7 +429,7 @@ func TestSequentialCSS(t *testing.T) {
 				defer vmGroup.Done()
 				vmID := fmt.Sprintf("%d", i+vmIDBase)
 				// var tStart = time.Now()
-				response, _, err := orch.StartVM(ctx, vmID, testImageName, vmSize, 1)
+				response, _, err := orch.StartVMModified(ctx, vmID, testImageName, vmSize, 1)
 				log.Info("CSS FcPid: ", response.FCPid)
 				CreateSSInstancePid[i] = response.FCPid
 				// serveMetrics[i].MetricMap[metrics.StartVM] = metrics.ToUS(time.Since(tStart))
@@ -491,18 +498,16 @@ func TestSequentialCSS(t *testing.T) {
 
 	var intfGroup sync.WaitGroup
 	if *interferNum != 0  {
-		{
-			for i := 0; i < *interferNum; i++ {
-				intfGroup.Add(1)
-				go func(i int) {
-					defer intfGroup.Done()
-					vmID := fmt.Sprintf("%d", i+vmIDBase)
-					err := orch.CreateSnapshot(ctx, vmID)
-					// // serveMetrics[i].MetricMap[metrics.CreateSnapshot] = metrics.ToUS(time.Since(tStart))
-					require.NoError(t, err, "Failed to create snapshot of VM, "+vmID)
-					log.Info("CSS finish!!!")
-				}(i)
-			}
+		for i := 0; i < *interferNum; i++ {
+			intfGroup.Add(1)
+			go func(i int) {
+				defer intfGroup.Done()
+				vmID := fmt.Sprintf("%d", i+vmIDBase)
+				err := orch.CreateSnapshot(ctx, vmID)
+				// // serveMetrics[i].MetricMap[metrics.CreateSnapshot] = metrics.ToUS(time.Since(tStart))
+				require.NoError(t, err, "Failed to create snapshot of VM, "+vmID)
+				log.Info("CSS finish!!!")
+			}(i)
 		}
 	}
 
@@ -521,7 +526,7 @@ func TestSequentialCSS(t *testing.T) {
 				victimID := fmt.Sprintf("%d", i+vmIDBase)
 				
 				// var tStart = time.Now()
-				response, metr, err := orch.StartVM(ctx, victimID, ImageName, 256, 1)
+				response, metr, err := orch.StartVMModified(ctx, victimID, ImageName, 256, 1)
 				// serveMetrics[x].MetricMap[metrics.StartVM] = metrics.ToUS(time.Since(tStart))
 				log.Info("Victim FCPid: ", response.FCPid)
 				if metr != nil {
@@ -574,6 +579,7 @@ func TestSequentialCSS(t *testing.T) {
 }
 
 func TestOnlyCSS(t *testing.T) {
+	
 	var (
 		// serveMetrics = make([]*metrics.Metric, *interferNum)//intf:8 parallelNum:1
 		CreateSSInstancePid = make([]string, *interferNum)
@@ -633,7 +639,8 @@ func TestOnlyCSS(t *testing.T) {
 				defer vmGroup.Done()
 				vmID := fmt.Sprintf("%d", i+vmIDBase)
 				// var tStart = time.Now()
-				response, _, err := orch.StartVM(ctx, vmID, testImageName, vmSize, 1)
+				response, _, err := orch.StartVMModified(ctx, vmID, testImageName, vmSize, 1)
+				log.Info("CSS FcPid: ", response.FCPid)
 				CreateSSInstancePid[i] = response.FCPid
 				// serveMetrics[i].MetricMap[metrics.StartVM] = metrics.ToUS(time.Since(tStart))
 				// if metr != nil {
@@ -664,85 +671,83 @@ func TestOnlyCSS(t *testing.T) {
 		vmGroup.Wait()
 	}
 
-	// if (*writeBW == 99999) {
-	// 	log.Info("resetting to no throttling...")
-	// 	throttleIoMaxCmd := "echo \"8:0 wbps=max\" | sudo tee /sys/fs/cgroup/test/io.max"
-	// 	exec.Command("/bin/bash", "-c", throttleIoMaxCmd).Start()
-	// } else{
-	// 	// echo max BW into io.max
-	// 	maxWriteBWByte := 1024*1024*(*writeBW)
-	// 	log.Info("throttling to ", maxWriteBWByte)
-	// 	throttleIoMaxCmd := fmt.Sprintf("echo \"8:0 wbps=%d\" | sudo tee /sys/fs/cgroup/test/io.max", maxWriteBWByte)
-	// 	exec.Command("/bin/bash", "-c", throttleIoMaxCmd).Start()
-	// 	// put createss pid(s) into procs 
-	// 	for i := 0; i < *interferNum; i++ {
-	// 		log.Info("here: ", CreateSSInstancePid[i])
-	// 		throttlePidCmd := fmt.Sprintf("echo %s | sudo tee /sys/fs/cgroup/test/cgroup.procs", CreateSSInstancePid[i])
-	// 		throttlePidCmdExec := exec.Command("/bin/bash", "-c", throttlePidCmd)
-	// 		stdout, err := throttlePidCmdExec.Output()
-	// 		if err != nil {
-	// 			fmt.Println(err.Error())
-	// 			return
-	// 		}
-	// 		fmt.Println(string(stdout))
-	// 	}
-	// }
+	// throttle interferon writeBW
+	if (*writeBW == 99999) {
+		log.Info("resetting to no throttling...")
+		throttleIoMaxCmd := "echo \"8:0 wbps=max\" | sudo tee /sys/fs/cgroup/test/io.max"
+		exec.Command("/bin/bash", "-c", throttleIoMaxCmd).Start()
+	} else{
+		// echo max BW into io.max
+		maxWriteBWByte := 1024*1024*(*writeBW)
+		log.Info("throttling to ", maxWriteBWByte)
+		throttleIoMaxCmd := fmt.Sprintf("echo \"8:0 wbps=%d\" | sudo tee /sys/fs/cgroup/test/io.max", maxWriteBWByte)
+		exec.Command("/bin/bash", "-c", throttleIoMaxCmd).Start()
+		// put createss pid(s) into procs 
+		for i := 0; i < *interferNum; i++ {
+			throttlePidCmd := fmt.Sprintf("echo %s | sudo tee /sys/fs/cgroup/test/cgroup.procs", CreateSSInstancePid[i])
+			throttlePidCmdExec := exec.Command("/bin/bash", "-c", throttlePidCmd)
+			stdout, err := throttlePidCmdExec.Output()
+			if err != nil {
+				fmt.Println(err.Error())
+				return
+			}
+			fmt.Println(string(stdout))
+		}
+	}
 	
+	readInSectorBeforeRun, writeInSectorBeforeRun := getDiskStats()
 
-	log.Info("Creating Seq Intf Snapshots ...")
+	var curReadSectors, curWriteSectors, prevReadSectors, prevWriteSectors, writesPerSecond, readsPerSecond float64
+	var allRecords [] IOWithTime
+    var curRecord IOWithTime
+	var getIOTimeGroup sync.WaitGroup
+	getIOTimeGroup.Add(1)
+	go func() {
+		defer getIOTimeGroup.Done()
+		for i := 0; i < 30; i++{
+			curReadSectors, curWriteSectors = getDiskStats()
+			if i == 0 {
+				readsPerSecond = (curReadSectors - readInSectorBeforeRun)*512/1024/1024
+				writesPerSecond = (curWriteSectors - writeInSectorBeforeRun)*512/1024/1024
+			}else {
+				readsPerSecond = (curReadSectors - prevReadSectors)*512/1024/1024
+				writesPerSecond = (curWriteSectors - prevWriteSectors)*512/1024/1024
+			}
+			log.Info("Read duing CSS in MB: ", readsPerSecond)
+			log.Info("Write duing CSS in MB: ", writesPerSecond)
+			curRecord = IOWithTime{time.Now(), readsPerSecond, writesPerSecond}
+			allRecords = append(allRecords, curRecord)
+			// update prevSectors
+			prevReadSectors = curReadSectors
+			prevWriteSectors = curWriteSectors
+			time.Sleep(1 * time.Second)	
+		}
+	}()
+
+	log.Info("Creating Intf Snapshots ...")
 	var intfGroup sync.WaitGroup
-	{
+	if *interferNum != 0 {
 		for i := 0; i < *interferNum; i++ {
 			intfGroup.Add(1)
+			time.Sleep(3*time.Second)
 			go func(i int) {
 				defer intfGroup.Done()
 				log.Info("creating SS for: ", i)
 				vmID := fmt.Sprintf("%d", i)
-				// snapID := vmID
-				// if *isFullLocal {
-				// 	snapID = fmt.Sprintf("myrev-%d", i+vmIDBase)
-				// }
-				// snap := snapshotting.NewSnapshot(snapID, *snapFilePath, TestImageName, vmSize, 1, *isSparseSnaps)
-				// if *isFullLocal {
-				// 	err = snap.CreateSnapDir()
-				// }
-				// require.NoError(t, err, "Failed to create directory for snapshot")
-				// var tStart = time.Now()
 				err :=orch.CreateSnapshot(ctx, vmID)
 				// serveMetrics[i].MetricMap[metrics.CreateSnapshot] = metrics.ToUS(time.Since(tStart))
 				require.NoError(t, err, "Failed to create snapshot of VM, "+vmID)
+				log.Info("CSS finish for vmID: ", vmID)
 			}(i)
 			// log.Info("All Create Snapshot threads have finished or exited ...")
 		}
 	}
-	// time.Sleep(5*time.Second)
-	// log.Info("Starting Victim VM ...")
-	// {
-	// 	var victimGroup sync.WaitGroup
-	// 	for i := *interferNum; i < *interferNum+vmNum; i++ {
-	// 		victimGroup.Add(1)
-	// 		go func(i, x int) {
-	// 			defer victimGroup.Done()
-	// 			victimID := fmt.Sprintf("%d", i+vmIDBase)
-	// 			var tStart = time.Now()
-	// 			response, metr, err := orch.StartVMWithPidStat(ctx, victimID, TestImageName, 256, 1, *isSparseSnaps, *writeBW, vmSize, *isVmTouch)
-	// 			serveMetrics[x].MetricMap[metrics.StartVM] = metrics.ToUS(time.Since(tStart))
-	// 			log.Info("Victim FCPid: ", response.FCPid)
-	// 			if metr != nil {
-	// 				for k, v := range metr.MetricMap {
-	// 					serveMetrics[x].MetricMap[k] = v
-	// 				}
-	// 			}
-	// 			require.NoError(t, err, "Failed to start VM, "+victimID)
-	// 		}(i, i-*interferNum)
-	// 	}
-	// 	victimGroup.Wait()
-	// }
-
-	// log.Info("Start VM Finishes here ...")
 	intfGroup.Wait()
 	log.Info("All Create Snapshot threads have finished or exited ...")
-	// time.Sleep(60*time.Second)
+	// log.Info("sleep for a lil to wait for flushing")
+
+	getIOTimeGroup.Wait()
+	TestwriteDiskIoWithTime(allRecords)
 	
 
 	// if *dumpMetrics {
@@ -783,4 +788,40 @@ func fusePrintMetrics(t *testing.T, serveMetrics, upfMetrics []*metrics.Metric, 
 
 	err := metrics.PrintMeanStd(outFileName, funcName, serveMetrics...)
 	require.NoError(t, err, "Failed to dump stats")
+}
+
+func TestwriteDiskIoWithTime(records []IOWithTime) {
+	// records := []IOWithTime{
+    //     {time.Now(), 4, 7},
+    //     {time.Now(), 25, 0},
+    //     {time.Now(), 25, 0},
+    // }
+    file, err := os.Create("record.csv")
+    defer file.Close()
+    if err != nil {
+        log.Fatalln("failed to open file", err)
+    }
+    w := csv.NewWriter(file)
+    defer w.Flush()
+	// write header
+    row := []string{"Timeline", "Read(MB)/s", "Write(MB)/s"}
+    if err := w.Write(row); err != nil {
+        log.Fatalln("error writing record to file", err)
+    }
+    // Using Write
+    for _, record := range records {
+		var curTimeFormatted = fmt.Sprintf("%d:%d:%d", record.curTime.Hour(), record.curTime.Minute(), record.curTime.Second())
+        row := []string{curTimeFormatted, fmt.Sprintf("%f", record.curRead), fmt.Sprintf("%f", record.curWrite)}
+        if err := w.Write(row); err != nil {
+            log.Fatalln("error writing record to file", err)
+        }
+    }
+    
+    // Using WriteAll
+    // var data [][]string
+    // for _, record := range records {
+    //     row := []string{record.curTime.String(), fmt.Sprintf("%f", record.curRead), fmt.Sprintf("%f", record.curRead)}
+    //     data = append(data, row)
+    // }
+    // w.WriteAll(data)
 }

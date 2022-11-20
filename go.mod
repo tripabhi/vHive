@@ -41,7 +41,8 @@ replace (
 )
 
 replace (
-	github.com/firecracker-microvm/firecracker-containerd => github.com/ease-lab/firecracker-containerd v0.0.0-20210618165033-6af02db30bc4
+	github.com/firecracker-microvm/firecracker-containerd => /home/cc/firecracker-containerd
+	// github.com/ease-lab/firecracker-containerd v0.0.0-20210618165033-6af02db30bc4
 	github.com/vhive-serverless/vhive/examples/protobuf/helloworld => ./examples/protobuf/helloworld
 )
 
