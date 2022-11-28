@@ -98,7 +98,8 @@ func NewOrchestrator(snapshotter, hostIface string, opts ...OrchestratorOption) 
 	o.vmPool = misc.NewVMPool()
 	o.cachedImages = make(map[string]containerd.Image)
 	o.snapshotter = snapshotter
-	o.snapshotsDir = "/fccd/snapshots"
+	// o.snapshotsDir = "/fccd/snapshots"
+	o.snapshotsDir = "/var/lib/firecracker-containerd/snapshots"
 	o.hostIface = hostIface
 
 	for _, opt := range opts {

@@ -25,13 +25,13 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 echo Killing firecracker agents and VMs
-sudo pkill -9 firec
-sudo pkill -9 containerd
+sudo pkill -f firec
+sudo pkill -f containerd
 
 echo Resetting nftables
-nft flush table ip filter
-nft "add chain ip filter FORWARD { type filter hook forward priority 0; policy accept; }"
-nft "add rule ip filter FORWARD ct state related,established counter accept"
+sudo nft flush table ip filter
+sudo nft "add chain ip filter FORWARD { type filter hook forward priority 0; policy accept; }"
+sudo nft "add rule ip filter FORWARD ct state related,established counter accept"
 
 echo Deleting veth* devices created by CNI
 cat /proc/net/dev | grep veth | cut -d" " -f1| cut -d":" -f1 | while read in; do sudo ip link delete "$in"; done
@@ -73,13 +73,14 @@ echo Cleaning /run/firecracker-containerd/*
 sudo rm -rf /run/firecracker-containerd/containerd.sock.ttrpc \
     /run/firecracker-containerd/io.containerd.runtime.v1.linux \
     /run/firecracker-containerd/io.containerd.runtime.v2.task \
-    /run/containerd/s
+    /run/containerd
 
 echo Cleaning CNI state, e.g., allocated addresses
 sudo rm /var/lib/cni/networks/fcnet*/last_reserved_ip.0 || echo clean already
 sudo rm /var/lib/cni/networks/fcnet*/19* || echo clean already
 
 sudo rm -rf /fccd/snapshots/* 
+sudo rm -rf /var/lib/firecracker-containerd/snapshots
 
 echo Creating a fresh devmapper
 source $DIR/create_devmapper.sh

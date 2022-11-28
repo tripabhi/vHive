@@ -674,13 +674,13 @@ func TestOnlyCSS(t *testing.T) {
 	// throttle interferon writeBW
 	if (*writeBW == 99999) {
 		log.Info("resetting to no throttling...")
-		throttleIoMaxCmd := "echo \"8:0 wbps=max\" | sudo tee /sys/fs/cgroup/test/io.max"
+		throttleIoMaxCmd := "echo \"259:2 wbps=max\" | sudo tee /sys/fs/cgroup/test/io.max"
 		exec.Command("/bin/bash", "-c", throttleIoMaxCmd).Start()
 	} else{
 		// echo max BW into io.max
 		maxWriteBWByte := 1024*1024*(*writeBW)
 		log.Info("throttling to ", maxWriteBWByte)
-		throttleIoMaxCmd := fmt.Sprintf("echo \"8:0 wbps=%d\" | sudo tee /sys/fs/cgroup/test/io.max", maxWriteBWByte)
+		throttleIoMaxCmd := fmt.Sprintf("echo \"259:2 wbps=%d\" | sudo tee /sys/fs/cgroup/test/io.max", maxWriteBWByte)
 		exec.Command("/bin/bash", "-c", throttleIoMaxCmd).Start()
 		// put createss pid(s) into procs 
 		for i := 0; i < *interferNum; i++ {

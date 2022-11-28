@@ -263,18 +263,22 @@ func (o *Orchestrator) StartVMModified(ctx context.Context, vmID, imageName stri
 	}
 	// startVMMetric.MetricMap[metrics.GetImage] = metrics.ToUS(time.Since(tStart))
 
-	log.Info("FcCreateVM for vmid: ", vmID)
+	log.Info("start FcCreateVM...")
 	readInSectorBeforeRun, writeInSectorBeforeRun := getDiskStats()
 	tStart = time.Now()
 	conf := o.getVMConfig(vm)
 	resp, err := o.fcClient.CreateVM(ctx, conf)
 	startVMMetric.MetricMap[metrics.FcCreateVM] = metrics.ToUS(time.Since(tStart))
 	if err != nil {
+		log.Errorf("failed to delete container after failure: %v", err)
 		return nil, nil, errors.Wrap(err, "failed to create the microVM in firecracker-containerd")
 	}
 	FCPid := resp.GetFirecrackerPID()
 	response = &StartVMResponse{GuestIP: vm.Ni.PrimaryAddress, FCPid: FCPid}
-
+	// get disk stats after run
+	readInSectorAfterRun, writeInSectorAfterRun := getDiskStats()
+	log.Info("Read in MB: ", (readInSectorAfterRun - readInSectorBeforeRun)*512/1024/1024)
+	log.Info("Write in MB: ", (writeInSectorAfterRun - writeInSectorBeforeRun)*512/1024/1024)
 
 	defer func() {
 		if retErr != nil {
@@ -284,7 +288,7 @@ func (o *Orchestrator) StartVMModified(ctx context.Context, vmID, imageName stri
 		}
 	}()
 
-	log.Info("NewContainer for vmid: ", vmID)
+	// log.Info("NewContainer for vmid: ", vmID)
 	tStart = time.Now()
 	container, err := o.client.NewContainer(
 		ctx,
@@ -303,6 +307,9 @@ func (o *Orchestrator) StartVMModified(ctx context.Context, vmID, imageName stri
 	if err != nil {
 		return nil, nil, errors.Wrap(err, "failed to create a container")
 	}
+	readInSectorAfterRun, writeInSectorAfterRun = getDiskStats()
+	log.Info("Read in MB: ", (readInSectorAfterRun - readInSectorBeforeRun)*512/1024/1024)
+	log.Info("Write in MB: ", (writeInSectorAfterRun - writeInSectorBeforeRun)*512/1024/1024)
 
 	defer func() {
 		if retErr != nil {
@@ -315,7 +322,7 @@ func (o *Orchestrator) StartVMModified(ctx context.Context, vmID, imageName stri
 	iologger := NewWorkloadIoWriter(vmID)
 	o.workloadIo.Store(vmID, &iologger)
 	// logger.Debug("StartVM: Creating a new task")
-	log.Info("NewTask for vmid: ", vmID)
+	// log.Info("NewTask for vmid: ", vmID)
 	tStart = time.Now()
 	task, err := container.NewTask(ctx, cio.NewCreator(cio.WithStreams(os.Stdin, iologger, iologger)))
 	startVMMetric.MetricMap[metrics.NewTask] = metrics.ToUS(time.Since(tStart))
@@ -351,7 +358,6 @@ func (o *Orchestrator) StartVMModified(ctx context.Context, vmID, imageName stri
 			}
 		}
 	}()
-	// get disk stats before run
 	
 
 	// logger.Debug("StartVM: Starting the task")
@@ -366,26 +372,22 @@ func (o *Orchestrator) StartVMModified(ctx context.Context, vmID, imageName stri
 	time.Sleep(10 * time.Second)
 
 	// kill the process and get the exit status
-	log.Info("killing task...")
+	// log.Info("killing task...")
 	if err := task.Kill(ctx, syscall.SIGKILL); err != nil {
 		log.Info("Error killing task!")
 	}
 
 	// wait for the process to fully exit and print out the exit status
 
-	log.Info("waiting for signal")
+	// log.Info("waiting for signal")
 	status := <-ch
-	log.Info("Getting the code...")
+	// log.Info("Getting the code...")
 	code, _, err := status.Result()
 	if err != nil {
 		logger.WithError(err).Errorf("failed to kill task after failure")
 	}
 	log.Info("Exited with status: ", code)
 	
-	// get disk stats after run
-	readInSectorAfterRun, writeInSectorAfterRun := getDiskStats()
-	log.Info("Read in MB: ", (readInSectorAfterRun - readInSectorBeforeRun)*512/1024/1024)
-	log.Info("Write in MB: ", (writeInSectorAfterRun - writeInSectorBeforeRun)*512/1024/1024)
 
 	defer func() {
 		if retErr != nil {
@@ -401,7 +403,7 @@ func (o *Orchestrator) StartVMModified(ctx context.Context, vmID, imageName stri
 		return nil, nil, err
 	}
 	if o.GetUPFEnabled() {
-		log.Info("UPF enabled!!!")
+		// log.Info("UPF enabled!!!")
 		logger.Debug("Registering VM with the memory manager")
 
 		stateCfg := manager.SnapshotStateCfg{
@@ -427,7 +429,7 @@ func (o *Orchestrator) StartVMModified(ctx context.Context, vmID, imageName stri
 }
 
 func getDiskStats() (readInSector, writeInSector float64) {
-	getDiskstatsCmd := "cat /proc/diskstats | grep sda"
+	getDiskstatsCmd := "cat /proc/diskstats | grep nvme0n1"
 	getDiskstatsOutput, err := exec.Command("/bin/bash", "-c", getDiskstatsCmd).Output()
 	if err != nil {
 		return
@@ -709,6 +711,7 @@ func (o *Orchestrator) CreateSnapshot(ctx context.Context, vmID string) error {
 	clientDeadline := time.Now().Add(10000 * time.Second)
 	ctxFwd, cancel := context.WithDeadline(ctx, clientDeadline)
 	defer cancel()
+	log.Info("snapshotPath: ", o.getMemoryFile(vmID))
 
 	req := &proto.CreateSnapshotRequest{
 		VMID:             vmID,
