@@ -70,8 +70,8 @@ type StartVMResponse struct {
 
 const (
 	testImageName = "ghcr.io/ease-lab/helloworld:var_workload"
-	// testImageName = "docker.io/vhiveease/video-analytics-decoder:latest"
-	testImageNamePyaes = "ghcr.io/ease-lab/pyaes:var_workload"
+	testImageNamePyaes = "docker.io/vhiveease/video-analytics-decoder:latest"
+	// testImageNamePyaes = "ghcr.io/ease-lab/pyaes:var_workload"
 )
 
 // StartVM Boots a VM if it does not exist
@@ -263,8 +263,8 @@ func (o *Orchestrator) StartVMModified(ctx context.Context, vmID, imageName stri
 	}
 	// startVMMetric.MetricMap[metrics.GetImage] = metrics.ToUS(time.Since(tStart))
 
-	log.Info("start FcCreateVM...")
-	readInSectorBeforeRun, writeInSectorBeforeRun := getDiskStats()
+	// log.Info("start FcCreateVM...")
+	// readInSectorBeforeRun, writeInSectorBeforeRun := getDiskStats()
 	tStart = time.Now()
 	conf := o.getVMConfig(vm)
 	resp, err := o.fcClient.CreateVM(ctx, conf)
@@ -276,9 +276,9 @@ func (o *Orchestrator) StartVMModified(ctx context.Context, vmID, imageName stri
 	FCPid := resp.GetFirecrackerPID()
 	response = &StartVMResponse{GuestIP: vm.Ni.PrimaryAddress, FCPid: FCPid}
 	// get disk stats after run
-	readInSectorAfterRun, writeInSectorAfterRun := getDiskStats()
-	log.Info("Read in MB: ", (readInSectorAfterRun - readInSectorBeforeRun)*512/1024/1024)
-	log.Info("Write in MB: ", (writeInSectorAfterRun - writeInSectorBeforeRun)*512/1024/1024)
+	// readInSectorAfterRun, writeInSectorAfterRun := getDiskStats()
+	// log.Info("Read in MB: ", (readInSectorAfterRun - readInSectorBeforeRun)*512/1024/1024)
+	// log.Info("Write in MB: ", (writeInSectorAfterRun - writeInSectorBeforeRun)*512/1024/1024)
 
 	defer func() {
 		if retErr != nil {
@@ -307,9 +307,9 @@ func (o *Orchestrator) StartVMModified(ctx context.Context, vmID, imageName stri
 	if err != nil {
 		return nil, nil, errors.Wrap(err, "failed to create a container")
 	}
-	readInSectorAfterRun, writeInSectorAfterRun = getDiskStats()
-	log.Info("Read in MB: ", (readInSectorAfterRun - readInSectorBeforeRun)*512/1024/1024)
-	log.Info("Write in MB: ", (writeInSectorAfterRun - writeInSectorBeforeRun)*512/1024/1024)
+	// readInSectorAfterRun, writeInSectorAfterRun = getDiskStats()
+	// log.Info("Read in MB: ", (readInSectorAfterRun - readInSectorBeforeRun)*512/1024/1024)
+	// log.Info("Write in MB: ", (writeInSectorAfterRun - writeInSectorBeforeRun)*512/1024/1024)
 
 	defer func() {
 		if retErr != nil {
@@ -341,7 +341,7 @@ func (o *Orchestrator) StartVMModified(ctx context.Context, vmID, imageName stri
 	}()
 
 	// logger.Debug("StartVM: Waiting for the task to get ready")
-	log.Info("TaskWait for vmid: ", vmID)
+	// log.Info("TaskWait for vmid: ", vmID)
 	tStart = time.Now()
 	ch, err := task.Wait(ctx)
 	startVMMetric.MetricMap[metrics.TaskWait] = metrics.ToUS(time.Since(tStart))
@@ -361,7 +361,7 @@ func (o *Orchestrator) StartVMModified(ctx context.Context, vmID, imageName stri
 	
 
 	// logger.Debug("StartVM: Starting the task")
-	log.Info("TaskStart for vmid: ", vmID)
+	// log.Info("TaskStart for vmid: ", vmID)
 	tStart = time.Now()
 	if err := task.Start(ctx); err != nil {
 		return nil, nil, errors.Wrap(err, "failed to start a task")
@@ -369,7 +369,7 @@ func (o *Orchestrator) StartVMModified(ctx context.Context, vmID, imageName stri
 	startVMMetric.MetricMap[metrics.TaskStart] = metrics.ToUS(time.Since(tStart))
 
 	// sleep for a lil bit to see the logs
-	time.Sleep(10 * time.Second)
+	time.Sleep(3 * time.Second)
 
 	// kill the process and get the exit status
 	// log.Info("killing task...")

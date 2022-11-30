@@ -82,12 +82,12 @@ test-seqCSS:
 	sudo mkdir -m777 -p $(CTRDLOGDIR) && sudo env "PATH=$(PATH)" /usr/local/bin/firecracker-containerd --config /etc/firecracker-containerd/config.toml 1>$(CTRDLOGDIR)/phased.out 2>$(CTRDLOGDIR)/phased.err &
 	sudo env "PATH=$(PATH)" go test $(EXTRAGOARGS) -run TestSequentialCSS -args $(WITHUPF) \
 	-writeBW=$(writeBW) -isVmTouch=$(isVmTouch) -dumpMetrics=$(dumpMetrics) \
-	-parallelNum=$(parallelNum) -interferNum=$(interferNum) -sameCtImg=$(sameCtImg) \
+	-parallelNum=$(parallelNum) -interferNum=$(interferNum) -sameCtImg=$(sameCtImg)
 	# & sudo iotop -d 0.1 -t -o -k > ./BW_logs/1024_concurrent_CSS/iotop_$(parallelNum)_$(interferNum)_$(writeBW).log \
 	# & iostat -m -t 1 -p sda -c -o JSON > ./BW_logs/1024_concurrent_CSS/iostat_$(parallelNum)_$(interferNum)_$(writeBW).json
 	# python3 /home/cc/vhive/ctriface/get_iostat.py ./Seq_CreateSS_$(parallelNum)_$(interferNum)/iostat_$(parallelNum)_$(interferNum)
 	# python3 /home/cc/vhive/ctriface/get_iotop.py ./Seq_CreateSS_$(parallelNum)_$(interferNum)/iotop_$(parallelNum)_$(interferNum)
-	./kill_running_tools.sh
+	# ./kill_running_tools.sh
 
 test-onlyCSS:
 	sudo ./clear_cache.sh
@@ -95,6 +95,6 @@ test-onlyCSS:
 	sudo mkdir -m777 -p $(CTRDLOGDIR) && sudo env "PATH=$(PATH)" /usr/local/bin/firecracker-containerd --config /etc/firecracker-containerd/config.toml 1>$(CTRDLOGDIR)/phased.out 2>$(CTRDLOGDIR)/phased.err &
 	sudo env "PATH=$(PATH)" go test $(EXTRAGOARGS) -run TestOnlyCSS -args $(WITHUPF) \
 	-writeBW=$(writeBW) -isVmTouch=$(isVmTouch) -dumpMetrics=$(dumpMetrics) \
-	-parallelNum=$(parallelNum) -interferNum=$(interferNum) \
+	-parallelNum=$(parallelNum) -interferNum=$(interferNum) 
 	# & iostat -m -t 1 -p sda -c -o JSON > ./only_CSS/iostat_$(interferNum)_$(writeBW).json \
 	# & sudo iotop -d 0.1 -t -o -k > ./only_CSS/iotop_$(interferNum)_$(writeBW).json

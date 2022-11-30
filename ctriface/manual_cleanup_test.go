@@ -47,7 +47,7 @@ var (
 	funcName    = flag.String("funcName", "helloworld", "Name of the function to benchmark")
 	snapFilePath= flag.String("snapFilePath", "/fccd/snapshots", "path for snapshots")
 	writeBW		= flag.Int("writeBW", 99999, "maximum write BW in MB/s")
-	vmSize uint32 = 256
+	vmSize uint32 = 1024
 	isVmTouch	= flag.Bool("isVmTouch", false, "preload the rootfs img and required metadata before createVM or not")
 	dumpMetrics = flag.Bool("dumpMetrics", true, "dump metrics or not")
 	useNVMe		= flag.Bool("useNVMe", false, "use nvme or not")
@@ -464,13 +464,13 @@ func TestSequentialCSS(t *testing.T) {
 	// throttle interferon writeBW
 	if (*writeBW == 99999) {
 		log.Info("resetting to no throttling...")
-		throttleIoMaxCmd := "echo \"8:0 wbps=max\" | sudo tee /sys/fs/cgroup/test/io.max"
+		throttleIoMaxCmd := "echo \"259:0 wbps=max\" | sudo tee /sys/fs/cgroup/test/io.max"
 		exec.Command("/bin/bash", "-c", throttleIoMaxCmd).Start()
 	} else{
 		// echo max BW into io.max
 		maxWriteBWByte := 1024*1024*(*writeBW)
 		log.Info("throttling to ", maxWriteBWByte)
-		throttleIoMaxCmd := fmt.Sprintf("echo \"8:0 wbps=%d\" | sudo tee /sys/fs/cgroup/test/io.max", maxWriteBWByte)
+		throttleIoMaxCmd := fmt.Sprintf("echo \"259:0 wbps=%d\" | sudo tee /sys/fs/cgroup/test/io.max", maxWriteBWByte)
 		exec.Command("/bin/bash", "-c", throttleIoMaxCmd).Start()
 		// put createss pid(s) into procs 
 		for i := 0; i < *interferNum; i++ {
@@ -494,7 +494,7 @@ func TestSequentialCSS(t *testing.T) {
 	// 		require.NoError(t, err, "Failed to create snapshot of VM, "+vmID)
 	// 	}(i)
 	// }
-	readInSectorBeforeRun, writeInSectorBeforeRun := getDiskStats()
+	// readInSectorBeforeRun, writeInSectorBeforeRun := getDiskStats()
 
 	var intfGroup sync.WaitGroup
 	if *interferNum != 0  {
@@ -548,19 +548,19 @@ func TestSequentialCSS(t *testing.T) {
 	// 	}
 	// }
 	log.Info("All Create Snapshot threads have finished or exited ...")
-	readInSectorAfterRun, writeInSectorAfterRun := getDiskStats()
-	log.Info("Read duing CSS in MB: ", (readInSectorAfterRun - readInSectorBeforeRun)*512/1024/1024)
-	log.Info("Write duing CSS in MB: ", (writeInSectorAfterRun - writeInSectorBeforeRun)*512/1024/1024)
+	// readInSectorAfterRun, writeInSectorAfterRun := getDiskStats()
+	// log.Info("Read duing CSS in MB: ", (readInSectorAfterRun - readInSectorBeforeRun)*512/1024/1024)
+	// log.Info("Write duing CSS in MB: ", (writeInSectorAfterRun - writeInSectorBeforeRun)*512/1024/1024)
 	// time.Sleep(5*time.Second)//wait for function to finish
 	
 
 	if *dumpMetrics {
 		var upfMetrics = make([]*metrics.Metric, *parallelNum)
-		var diff_or_same = "diff"
-		if *sameCtImg {
-			diff_or_same = "same"
-		}
-		filePath := fmt.Sprintf("./test_diffCSSNC/1024_concurrent_CSS/%d_%d_%d_%s.csv" , *parallelNum, *interferNum, *writeBW, diff_or_same)
+		// var diff_or_same = "diff"
+		// if *sameCtImg {
+		// 	diff_or_same = "same"
+		// }
+		filePath := fmt.Sprintf("./verify/%d_%d_%d.csv" , *parallelNum, *interferNum, *writeBW)
 		// if !*sameCtImg {
 		// 	filePath = fmt.Sprintf("./test_diffCSSNC/%d_%d_%d.csv" , *parallelNum, *interferNum, *writeBW)
 		// }
@@ -574,8 +574,8 @@ func TestSequentialCSS(t *testing.T) {
 		fusePrintMetrics(t, serveMetrics, upfMetrics, &notUsingUpf, true, *funcName, filePath)
 	}
 
-	killpidstatCmd := "/home/cc/vHive/ctriface/kill_running_tools.sh"
-	exec.Command("/bin/bash", "-c", killpidstatCmd).Start()
+	// killpidstatCmd := "/home/cc/vHive/ctriface/kill_running_tools.sh"
+	// exec.Command("/bin/bash", "-c", killpidstatCmd).Start()
 }
 
 func TestOnlyCSS(t *testing.T) {
@@ -674,13 +674,13 @@ func TestOnlyCSS(t *testing.T) {
 	// throttle interferon writeBW
 	if (*writeBW == 99999) {
 		log.Info("resetting to no throttling...")
-		throttleIoMaxCmd := "echo \"259:2 wbps=max\" | sudo tee /sys/fs/cgroup/test/io.max"
+		throttleIoMaxCmd := "echo \"259:0 wbps=max\" | sudo tee /sys/fs/cgroup/test/io.max"
 		exec.Command("/bin/bash", "-c", throttleIoMaxCmd).Start()
 	} else{
 		// echo max BW into io.max
 		maxWriteBWByte := 1024*1024*(*writeBW)
 		log.Info("throttling to ", maxWriteBWByte)
-		throttleIoMaxCmd := fmt.Sprintf("echo \"259:2 wbps=%d\" | sudo tee /sys/fs/cgroup/test/io.max", maxWriteBWByte)
+		throttleIoMaxCmd := fmt.Sprintf("echo \"259:0 wbps=%d\" | sudo tee /sys/fs/cgroup/test/io.max", maxWriteBWByte)
 		exec.Command("/bin/bash", "-c", throttleIoMaxCmd).Start()
 		// put createss pid(s) into procs 
 		for i := 0; i < *interferNum; i++ {
@@ -729,7 +729,7 @@ func TestOnlyCSS(t *testing.T) {
 	if *interferNum != 0 {
 		for i := 0; i < *interferNum; i++ {
 			intfGroup.Add(1)
-			time.Sleep(3*time.Second)
+			// time.Sleep(3*time.Second)
 			go func(i int) {
 				defer intfGroup.Done()
 				log.Info("creating SS for: ", i)
