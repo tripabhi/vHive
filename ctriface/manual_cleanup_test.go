@@ -60,8 +60,17 @@ type IOWithTime struct {
 	curRead float64
     curWrite float64
 }
+func dropPageCache() {
+	cmd := exec.Command("sudo", "/bin/sh", "-c", "sync; echo 1 > /proc/sys/vm/drop_caches")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stdout
 
-func TestSnapLoad(t *testing.T) {
+	if err := cmd.Run(); err != nil {
+		log.Fatalf("Failed to drop caches: %v", err)
+	}
+}
+
+func TestSnapLoad1(t *testing.T) {
 	// Need to clean up manually after this test because StopVM does not
 	// work for stopping machines which are loaded from snapshots yet
 	log.SetFormatter(&log.TextFormatter{
@@ -96,19 +105,24 @@ func TestSnapLoad(t *testing.T) {
 
 	err = orch.CreateSnapshot(ctx, vmID)
 	require.NoError(t, err, "Failed to create snapshot of VM")
+	log.Info("CSS finishes.!!")
 
-	_, err = orch.ResumeVM(ctx, vmID)
-	require.NoError(t, err, "Failed to resume VM")
+	// _, err = orch.ResumeVM(ctx, vmID)
+	// require.NoError(t, err, "Failed to resume VM")
 
 	err = orch.Offload(ctx, vmID)
 	require.NoError(t, err, "Failed to offload VM")
+	time.Sleep(60*time.Second)
+	dropPageCache()
 
+	log.Info("Loading SS...")
 	_, err = orch.LoadSnapshot(ctx, vmID)
 	require.NoError(t, err, "Failed to load snapshot of VM")
-
+	log.Info("resuming function...")
 	_, err = orch.ResumeVM(ctx, vmID)
 	require.NoError(t, err, "Failed to resume VM")
-
+	log.Info("finish!!!")
+	time.Sleep(30*time.Second)
 	orch.Cleanup()
 }
 
@@ -350,7 +364,6 @@ func TestParallelPhasedSnapLoad(t *testing.T) {
 
 	orch.Cleanup()
 }
-
 
 func TestSequentialCSS(t *testing.T) {
 	var (
@@ -739,11 +752,12 @@ func TestOnlyCSS(t *testing.T) {
 				require.NoError(t, err, "Failed to create snapshot of VM, "+vmID)
 				log.Info("CSS finish for vmID: ", vmID)
 			}(i)
-			// log.Info("All Create Snapshot threads have finished or exited ...")
 		}
 	}
-	intfGroup.Wait()
-	log.Info("All Create Snapshot threads have finished or exited ...")
+	
+	log.Info("All Create Snapshot threads have finished or exited. Syncing...")
+	syncCmd := "sync"
+	exec.Command("sudo", "/bin/bash", "-c", syncCmd).Start()
 	// log.Info("sleep for a lil to wait for flushing")
 
 	getIOTimeGroup.Wait()
@@ -762,9 +776,7 @@ func TestOnlyCSS(t *testing.T) {
 
 	// 	fusePrintMetrics(t, serveMetrics, upfMetrics, &notUsingUpf, true, *funcName, filePath)
 	// }
-
-	// killpidstatCmd := "./killPidStat.sh"
-	// exec.Command("/bin/bash", "-c", killpidstatCmd).Start()
+	
 }
 
 func fusePrintMetrics(t *testing.T, serveMetrics, upfMetrics []*metrics.Metric, isUPFEnabled *bool, printIndiv bool, funcName, outfile string) {
@@ -824,4 +836,271 @@ func TestwriteDiskIoWithTime(records []IOWithTime) {
     //     data = append(data, row)
     // }
     // w.WriteAll(data)
+}
+
+func TestLoadSnap(t *testing.T) {
+	var (
+		serveMetrics = make([]*metrics.Metric, *parallelNum)
+		
+	)
+	for i := 0; i < *parallelNum; i++ {
+		serveMetrics[i] = metrics.NewMetric()
+	}
+
+	log.SetFormatter(&log.TextFormatter{
+		TimestampFormat: ctrdlog.RFC3339NanoFixed,
+		FullTimestamp:   true,
+	})
+
+	log.SetOutput(os.Stdout)
+
+	log.SetLevel(log.InfoLevel)
+
+	testTimeout := 300 * time.Second
+	ctx, cancel := context.WithTimeout(namespaces.WithNamespace(context.Background(), namespaceName), testTimeout)
+	defer cancel()
+
+	vmNum := *parallelNum
+	// vmIDBase := 0
+
+	orch := NewOrchestrator(
+		"devmapper",
+		"",
+		WithTestModeOn(true),
+		WithUPF(false),
+		WithLazyMode(*isLazyMode),
+	)
+	defer orch.Cleanup()
+
+	// Pull image
+	log.Info("pulling intf image now......")
+	_, err := orch.getImage(ctx, testImageName)
+	require.NoError(t, err, "Failed to pull image "+testImageName)
+	ImageName := testImageName
+	if !*sameCtImg {
+		ImageName = testImageNamePyaes
+		log.Info("pulling victim image now......")
+		_, err := orch.getImage(ctx, testImageNamePyaes)
+		require.NoError(t, err, "Failed to pull image "+testImageNamePyaes)
+	}
+
+	var vmGroup sync.WaitGroup
+	var dummyInterferon int
+	if *interferNum == 0 {
+		dummyInterferon = 1
+	} else {
+		dummyInterferon = *interferNum
+	}
+	var CreateSSInstancePid = make([]string, dummyInterferon)
+	log.Info("Starting Intf VM ...")
+	for i := 0; i < dummyInterferon; i++ {
+		vmGroup.Add(1)
+		go func(i int) {
+			defer vmGroup.Done()
+			vmID := fmt.Sprintf("%d", i)
+			response, _, err := orch.StartVMModified(ctx, vmID, testImageName, vmSize, 1)
+			log.Info("CSS FcPid: ", response.FCPid)
+			CreateSSInstancePid[i] = response.FCPid
+			require.NoError(t, err, "Failed to start VM, "+vmID)
+		}(i)
+	}
+	vmGroup.Wait()
+
+	log.Info("Pausing Intf VM ...")
+	{
+		var vmGroup sync.WaitGroup
+		for i := 0; i < dummyInterferon; i++ {
+			vmGroup.Add(1)
+			go func(i int) {
+				defer vmGroup.Done()
+				vmID := fmt.Sprintf("%d", i)
+				// var tStart = time.Now()
+				err := orch.PauseVM(ctx, vmID)
+				// serveMetrics[i].MetricMap[metrics.PauseVM] = metrics.ToUS(time.Since(tStart))
+				require.NoError(t, err, "Failed to pause VM, "+vmID)
+			}(i)
+		}
+		vmGroup.Wait()
+	}
+
+	// throttle interferon writeBW
+	if (*writeBW == 99999) {
+		log.Info("resetting to no throttling...")
+		throttleIoMaxCmd := "echo \"259:0 wbps=max\" | sudo tee /sys/fs/cgroup/test/io.max"
+		exec.Command("/bin/bash", "-c", throttleIoMaxCmd).Start()
+	} else{
+		// echo max BW into io.max
+		maxWriteBWByte := 1024*1024*(*writeBW)
+		log.Info("throttling to ", maxWriteBWByte)
+		throttleIoMaxCmd := fmt.Sprintf("echo \"259:0 wbps=%d\" | sudo tee /sys/fs/cgroup/test/io.max", maxWriteBWByte)
+		exec.Command("/bin/bash", "-c", throttleIoMaxCmd).Start()
+		// put createss pid(s) into procs 
+		for i := 0; i < *interferNum; i++ {
+			throttlePidCmd := fmt.Sprintf("echo %s | sudo tee /sys/fs/cgroup/test/cgroup.procs", CreateSSInstancePid[i])
+			throttlePidCmdExec := exec.Command("/bin/bash", "-c", throttlePidCmd)
+			stdout, err := throttlePidCmdExec.Output()
+			if err != nil {
+				fmt.Println(err.Error())
+				return
+			}
+			fmt.Println(string(stdout))
+		}
+	}
+
+	log.Info("Starting victim VMs ...")
+	{
+		var victimGroup sync.WaitGroup
+		for i := dummyInterferon; i < dummyInterferon+vmNum; i++ {
+			victimGroup.Add(1)
+			go func(i, x int) {
+				defer victimGroup.Done()
+				victimID := fmt.Sprintf("%d", i)
+				response, metr, err := orch.StartVMModified(ctx, victimID, ImageName, 256, 1)
+				// serveMetrics[x].MetricMap[metrics.StartVM] = metrics.ToUS(time.Since(tStart))
+				log.Info("Victim FCPid: ", response.FCPid)
+				if metr != nil {
+					for k, v := range metr.MetricMap {
+						serveMetrics[x].MetricMap[k] = v
+					}
+				}
+				require.NoError(t, err, "Failed to start VM, "+victimID)
+			}(i, i-dummyInterferon)
+		}
+		victimGroup.Wait()
+	}
+	// if *interferNum != 0 {
+	// 	for i := 0; i < *interferNum; i++ {
+	// 		quit <- true
+	// 	}
+	// }
+	log.Info("Pausing victim VM ...")
+	{
+		var vmGroup sync.WaitGroup
+		for i := dummyInterferon; i < dummyInterferon+vmNum; i++ {
+			vmGroup.Add(1)
+			go func(i int) {
+				defer vmGroup.Done()
+				vmID := fmt.Sprintf("%d", i)
+				// var tStart = time.Now()
+				err := orch.PauseVM(ctx, vmID)
+				// serveMetrics[i].MetricMap[metrics.PauseVM] = metrics.ToUS(time.Since(tStart))
+				require.NoError(t, err, "Failed to pause VM, "+vmID)
+			}(i)
+		}
+		vmGroup.Wait()
+	}
+	// readInSectorAfterRun, writeInSectorAfterRun := getDiskStats()
+	// log.Info("Read duing CSS in MB: ", (readInSectorAfterRun - readInSectorBeforeRun)*512/1024/1024)
+	// log.Info("Write duing CSS in MB: ", (writeInSectorAfterRun - writeInSectorBeforeRun)*512/1024/1024)
+	// time.Sleep(5*time.Second)//wait for function to finish
+	log.Info("CSS VM ...")
+	{
+		var intfGroup sync.WaitGroup
+		for i := dummyInterferon; i < dummyInterferon+vmNum; i++ {
+			intfGroup.Add(1)
+			go func(i int) {
+				defer intfGroup.Done()
+				vmID := fmt.Sprintf("%d", i)
+				err := orch.CreateSnapshot(ctx, vmID)
+				require.NoError(t, err, "Failed to create snapshot of VM, "+vmID)
+			}(i)
+		}
+		intfGroup.Wait()
+	}
+	log.Info("Syncing victim Snapshots...")
+	exec.Command("sudo", "/bin/bash", "-c", "sync").Start()
+			
+	log.Info("offloading victim ...")
+	{
+		var vmGroup sync.WaitGroup
+		for i := dummyInterferon; i < dummyInterferon+vmNum; i++ {
+			vmGroup.Add(1)
+			go func(i int) {
+				defer vmGroup.Done()
+				vmID := fmt.Sprintf("%d", i)
+				err := orch.Offload(ctx, vmID)
+				require.NoError(t, err, "Failed to offload VM, "+vmID)
+			}(i)
+		}
+		vmGroup.Wait()
+	}
+
+	log.Info("Creating Intf Snapshots... in BG")
+	if *interferNum != 0  {
+		var intfGroup sync.WaitGroup
+		for i := 0; i < *interferNum; i++ {
+			intfGroup.Add(1)
+			go func(i int) {
+				defer intfGroup.Done()
+				// log.Info("creating SS for: ", i)
+				vmID := fmt.Sprintf("%d", i)
+				err := orch.CreateSnapshot(ctx, vmID)
+				require.NoError(t, err, "Failed to create snapshot of VM, "+vmID)
+			}(i)
+		}
+		intfGroup.Wait()
+	}
+	go func() {
+		log.Info("All Create Snapshot threads have finished or exited. Syncing...")
+		exec.Command("sudo", "/bin/bash", "-c", "sync").Start()
+	}()
+
+	log.Info("victim loading SS ...")
+	{
+		var vmGroup sync.WaitGroup
+		for i := dummyInterferon; i < dummyInterferon+vmNum; i++ {
+			vmGroup.Add(1)
+			go func(i int) {
+				defer vmGroup.Done()
+				vmID := fmt.Sprintf("%d", i)
+				_, err := orch.LoadSnapshot(ctx, vmID)
+				require.NoError(t, err, "Failed to load snapshot of VM, "+vmID)
+			}(i)
+		}
+		vmGroup.Wait()
+	}
+
+	log.Info("victim resuming SS ...")
+	{
+		var vmGroup sync.WaitGroup
+		for i := dummyInterferon; i < dummyInterferon+vmNum; i++ {
+			vmGroup.Add(1)
+			go func(i int) {
+				defer vmGroup.Done()
+				vmID := fmt.Sprintf("%d", i)
+				_, err := orch.ResumeVM(ctx, vmID)
+				require.NoError(t, err, "Failed to resume VM, "+vmID)
+			}(i)
+		}
+		vmGroup.Wait()
+	}
+	
+	// time.Sleep(9999*time.Second)
+
+	// _, err = orch.LoadSnapshot(ctx, vmID)
+	// require.NoError(t, err, "Failed to load snapshot of VM")
+
+	// _, err = orch.ResumeVM(ctx, vmID)
+	// require.NoError(t, err, "Failed to resume VM")
+
+
+	// if *dumpMetrics {
+	// 	var upfMetrics = make([]*metrics.Metric, *parallelNum)
+	// 	// var diff_or_same = "diff"
+	// 	// if *sameCtImg {
+	// 	// 	diff_or_same = "same"
+	// 	// }
+	// 	filePath := fmt.Sprintf("./verify/%d_%d_%d.csv" , *parallelNum, *interferNum, *writeBW)
+	// 	// if !*sameCtImg {
+	// 	// 	filePath = fmt.Sprintf("./test_diffCSSNC/%d_%d_%d.csv" , *parallelNum, *interferNum, *writeBW)
+	// 	// }
+	// 	// vmtouchExt := ""
+	// 	// if *isVmTouch {
+	// 	// 	vmtouchExt = "_vmtouch"
+	// 	// }
+	// 	// filePath := fmt.Sprintf("./Seq_CreateSS_%d_%d_throttle/Seq_CreateSS_%d%s.csv" , *parallelNum, *interferNum, *writeBW, vmtouchExt)
+	// 	notUsingUpf := false
+
+	// 	fusePrintMetrics(t, serveMetrics, upfMetrics, &notUsingUpf, true, *funcName, filePath)
+	// }
 }

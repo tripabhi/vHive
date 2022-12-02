@@ -70,8 +70,8 @@ type StartVMResponse struct {
 
 const (
 	testImageName = "ghcr.io/ease-lab/helloworld:var_workload"
-	testImageNamePyaes = "docker.io/vhiveease/video-analytics-decoder:latest"
-	// testImageNamePyaes = "ghcr.io/ease-lab/pyaes:var_workload"
+	// testImageName = "docker.io/vhiveease/video-analytics-recog:latest"
+	testImageNamePyaes = "ghcr.io/ease-lab/pyaes:var_workload"
 )
 
 // StartVM Boots a VM if it does not exist
@@ -89,6 +89,7 @@ func (o *Orchestrator) StartVM(ctx context.Context, vmID, imageName string) (_ *
 		logger.Error("failed to allocate VM in VM pool")
 		return nil, nil, err
 	}
+	vm.MemSizeMib = 1024
 
 	defer func() {
 		// Free the VM from the pool if function returns error
@@ -192,6 +193,25 @@ func (o *Orchestrator) StartVM(ctx context.Context, vmID, imageName string) (_ *
 		return nil, nil, errors.Wrap(err, "failed to start a task")
 	}
 	startVMMetric.MetricMap[metrics.TaskStart] = metrics.ToUS(time.Since(tStart))
+
+	time.Sleep(1 * time.Second) // let the function run 1 sec
+
+	// kill the process and get the exit status
+	// log.Info("killing task...")
+	// if err := task.Kill(ctx, syscall.SIGKILL); err != nil {
+	// 	log.Info("Error killing task!")
+	// }
+
+	// // wait for the process to fully exit and print out the exit status
+
+	// // log.Info("waiting for signal")
+	// status := <-ch
+	// // log.Info("Getting the code...")
+	// code, _, err := status.Result()
+	// if err != nil {
+	// 	logger.WithError(err).Errorf("failed to kill task after failure")
+	// }
+	// log.Info("Exited with status: ", code)
 
 	defer func() {
 		if retErr != nil {
@@ -776,6 +796,8 @@ func (o *Orchestrator) LoadSnapshot(ctx context.Context, vmID string) (*metrics.
 	logger.Debug("Orchestrator received LoadSnapshot")
 
 	ctx = namespaces.WithNamespace(ctx, namespaceName)
+	// log.Info("SnapshotFile: ", o.getSnapshotFile(vmID))
+	// log.Info("MemoryFile: ", o.getMemoryFile(vmID))
 
 	req := &proto.LoadSnapshotRequest{
 		VMID:             vmID,
@@ -785,6 +807,7 @@ func (o *Orchestrator) LoadSnapshot(ctx context.Context, vmID string) (*metrics.
 	}
 
 	if o.GetUPFEnabled() {
+		log.Info("UPF enabled!!")
 		if err := o.memoryManager.FetchState(vmID); err != nil {
 			return nil, err
 		}
