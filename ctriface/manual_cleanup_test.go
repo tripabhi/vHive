@@ -112,7 +112,7 @@ func TestSnapLoad1(t *testing.T) {
 
 	err = orch.Offload(ctx, vmID)
 	require.NoError(t, err, "Failed to offload VM")
-	time.Sleep(60*time.Second)
+	// time.Sleep(0*time.Second)
 	dropPageCache()
 
 	log.Info("Loading SS...")
@@ -121,8 +121,8 @@ func TestSnapLoad1(t *testing.T) {
 	log.Info("resuming function...")
 	_, err = orch.ResumeVM(ctx, vmID)
 	require.NoError(t, err, "Failed to resume VM")
-	log.Info("finish!!!")
-	time.Sleep(30*time.Second)
+	log.Info("page faulting, attention!!!")
+	time.Sleep(40*time.Second)
 	orch.Cleanup()
 }
 
@@ -418,10 +418,10 @@ func TestSequentialCSS(t *testing.T) {
 	require.NoError(t, err, "Failed to pull image "+testImageName)
 	ImageName := testImageName
 	if !*sameCtImg {
-		ImageName = testImageNamePyaes
+		ImageName = testImageNameVictim
 		log.Info("pulling victim image now......")
-		_, err := orch.getImage(ctx, testImageNamePyaes)
-		require.NoError(t, err, "Failed to pull image "+testImageNamePyaes)
+		_, err := orch.getImage(ctx, testImageNameVictim)
+		require.NoError(t, err, "Failed to pull image "+testImageNameVictim)
 	}
 	
 	// log.Info("pull complete, starting Victim VM ...")
@@ -429,32 +429,32 @@ func TestSequentialCSS(t *testing.T) {
 	var dummyInterferon int
 	log.Info("Starting Intf VM ...")
 	
-		var vmGroup sync.WaitGroup
-		if *interferNum == 0 {
-			dummyInterferon = 1
-		} else {
-			dummyInterferon = *interferNum
-		}
-		var CreateSSInstancePid = make([]string, dummyInterferon)
-		for i := 0; i < dummyInterferon; i++ {
-			vmGroup.Add(1)
-			go func(i int) {
-				defer vmGroup.Done()
-				vmID := fmt.Sprintf("%d", i+vmIDBase)
-				// var tStart = time.Now()
-				response, _, err := orch.StartVMModified(ctx, vmID, testImageName, vmSize, 1)
-				log.Info("CSS FcPid: ", response.FCPid)
-				CreateSSInstancePid[i] = response.FCPid
-				// serveMetrics[i].MetricMap[metrics.StartVM] = metrics.ToUS(time.Since(tStart))
-				// if metr != nil {
-				// 	for k, v := range metr.MetricMap {
-				// 		serveMetrics[i].MetricMap[k] = v
-				// 	}
-				// }
-				require.NoError(t, err, "Failed to start VM, "+vmID)
-			}(i)
-		}
-		vmGroup.Wait()
+	var vmGroup sync.WaitGroup
+	if *interferNum == 0 {
+		dummyInterferon = 1
+	} else {
+		dummyInterferon = *interferNum
+	}
+	var CreateSSInstancePid = make([]string, dummyInterferon)
+	for i := 0; i < dummyInterferon; i++ {
+		vmGroup.Add(1)
+		go func(i int) {
+			defer vmGroup.Done()
+			vmID := fmt.Sprintf("%d", i+vmIDBase)
+			// var tStart = time.Now()
+			response, _, err := orch.StartVMModified(ctx, vmID, testImageName, vmSize, 1)
+			log.Info("CSS FcPid: ", response.FCPid)
+			CreateSSInstancePid[i] = response.FCPid
+			// serveMetrics[i].MetricMap[metrics.StartVM] = metrics.ToUS(time.Since(tStart))
+			// if metr != nil {
+			// 	for k, v := range metr.MetricMap {
+			// 		serveMetrics[i].MetricMap[k] = v
+			// 	}
+			// }
+			require.NoError(t, err, "Failed to start VM, "+vmID)
+		}(i)
+	}
+	vmGroup.Wait()
 	
 
 	log.Info("Pausing Intf VM ...")
@@ -522,6 +522,9 @@ func TestSequentialCSS(t *testing.T) {
 				log.Info("CSS finish!!!")
 			}(i)
 		}
+		intfGroup.Wait()
+		log.Info("All Create Snapshot threads have finished or exited, syncing...")
+		exec.Command("sudo", "/bin/bash", "-c", "sync").Start()
 	}
 
 	// wait for a few second to make sure intf doing disk write
@@ -554,13 +557,12 @@ func TestSequentialCSS(t *testing.T) {
 	}
 
 	log.Info("Start VM Finishes here ...")
-	intfGroup.Wait()
+	
 	// if *interferNum != 0 {
 	// 	for i := 0; i < *interferNum; i++ {
 	// 		quit <- true
 	// 	}
 	// }
-	log.Info("All Create Snapshot threads have finished or exited ...")
 	// readInSectorAfterRun, writeInSectorAfterRun := getDiskStats()
 	// log.Info("Read duing CSS in MB: ", (readInSectorAfterRun - readInSectorBeforeRun)*512/1024/1024)
 	// log.Info("Write duing CSS in MB: ", (writeInSectorAfterRun - writeInSectorBeforeRun)*512/1024/1024)
@@ -878,10 +880,10 @@ func TestLoadSnap(t *testing.T) {
 	require.NoError(t, err, "Failed to pull image "+testImageName)
 	ImageName := testImageName
 	if !*sameCtImg {
-		ImageName = testImageNamePyaes
+		ImageName = testImageNameVictim
 		log.Info("pulling victim image now......")
-		_, err := orch.getImage(ctx, testImageNamePyaes)
-		require.NoError(t, err, "Failed to pull image "+testImageNamePyaes)
+		_, err := orch.getImage(ctx, testImageNameVictim)
+		require.NoError(t, err, "Failed to pull image "+testImageNameVictim)
 	}
 
 	var vmGroup sync.WaitGroup

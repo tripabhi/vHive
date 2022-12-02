@@ -70,8 +70,8 @@ type StartVMResponse struct {
 
 const (
 	testImageName = "ghcr.io/ease-lab/helloworld:var_workload"
-	// testImageName = "docker.io/vhiveease/video-analytics-recog:latest"
-	testImageNamePyaes = "ghcr.io/ease-lab/pyaes:var_workload"
+	testImageNameVictim = "docker.io/vhiveease/video-analytics-recog:latest"
+	// testImageNameVictim = "ghcr.io/ease-lab/pyaes:var_workload"
 )
 
 // StartVM Boots a VM if it does not exist
