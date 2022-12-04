@@ -443,7 +443,7 @@ func TestSequentialCSS(t *testing.T) {
 			vmID := fmt.Sprintf("%d", i+vmIDBase)
 			// var tStart = time.Now()
 			response, _, err := orch.StartVMModified(ctx, vmID, testImageName, vmSize, 1)
-			log.Info("CSS FcPid: ", response.FCPid)
+			// log.Info("CSS FcPid: ", response.FCPid)
 			CreateSSInstancePid[i] = response.FCPid
 			// serveMetrics[i].MetricMap[metrics.StartVM] = metrics.ToUS(time.Since(tStart))
 			// if metr != nil {
@@ -519,7 +519,7 @@ func TestSequentialCSS(t *testing.T) {
 				err := orch.CreateSnapshot(ctx, vmID)
 				// // serveMetrics[i].MetricMap[metrics.CreateSnapshot] = metrics.ToUS(time.Since(tStart))
 				require.NoError(t, err, "Failed to create snapshot of VM, "+vmID)
-				log.Info("CSS finish!!!")
+				// log.Info("CSS finish!!!")
 			}(i)
 		}
 		intfGroup.Wait()
@@ -655,7 +655,7 @@ func TestOnlyCSS(t *testing.T) {
 				vmID := fmt.Sprintf("%d", i+vmIDBase)
 				// var tStart = time.Now()
 				response, _, err := orch.StartVMModified(ctx, vmID, testImageName, vmSize, 1)
-				log.Info("CSS FcPid: ", response.FCPid)
+				// log.Info("CSS FcPid: ", response.FCPid)
 				CreateSSInstancePid[i] = response.FCPid
 				// serveMetrics[i].MetricMap[metrics.StartVM] = metrics.ToUS(time.Since(tStart))
 				// if metr != nil {
@@ -901,7 +901,7 @@ func TestLoadSnap(t *testing.T) {
 			defer vmGroup.Done()
 			vmID := fmt.Sprintf("%d", i)
 			response, _, err := orch.StartVMModified(ctx, vmID, testImageName, vmSize, 1)
-			log.Info("CSS FcPid: ", response.FCPid)
+			// log.Info("CSS FcPid: ", response.FCPid)
 			CreateSSInstancePid[i] = response.FCPid
 			require.NoError(t, err, "Failed to start VM, "+vmID)
 		}(i)

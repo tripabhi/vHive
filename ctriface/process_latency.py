@@ -4,7 +4,7 @@ import re
 import pandas as pd
 import csv
 
-resultDir = "./test_diffCSSNC/1024_concurrent_CSS"
+resultDir = "./verify"
 os.chdir(resultDir+"/")
 all_rows = []
 col_name = ["ExpEnv", "FcCreateVM", "FcCreateVMStd", "FcCreateVMMin", "FcCreateVMMax", \

@@ -393,20 +393,20 @@ func (o *Orchestrator) StartVMModified(ctx context.Context, vmID, imageName stri
 
 	// kill the process and get the exit status
 	// log.Info("killing task...")
-	if err := task.Kill(ctx, syscall.SIGKILL); err != nil {
-		log.Info("Error killing task!")
-	}
+	// if err := task.Kill(ctx, syscall.SIGKILL); err != nil {
+	// 	log.Info("Error killing task!")
+	// }
 
-	// wait for the process to fully exit and print out the exit status
+	// // wait for the process to fully exit and print out the exit status
 
-	// log.Info("waiting for signal")
-	status := <-ch
-	// log.Info("Getting the code...")
-	code, _, err := status.Result()
-	if err != nil {
-		logger.WithError(err).Errorf("failed to kill task after failure")
-	}
-	log.Info("Exited with status: ", code)
+	// // log.Info("waiting for signal")
+	// status := <-ch
+	// // log.Info("Getting the code...")
+	// code, _, err := status.Result()
+	// if err != nil {
+	// 	logger.WithError(err).Errorf("failed to kill task after failure")
+	// }
+	// log.Info("Exited with status: ", code)
 	
 
 	defer func() {
@@ -731,7 +731,7 @@ func (o *Orchestrator) CreateSnapshot(ctx context.Context, vmID string) error {
 	clientDeadline := time.Now().Add(10000 * time.Second)
 	ctxFwd, cancel := context.WithDeadline(ctx, clientDeadline)
 	defer cancel()
-	log.Info("snapshotPath: ", o.getMemoryFile(vmID))
+	// log.Info("snapshotPath: ", o.getMemoryFile(vmID))
 
 	req := &proto.CreateSnapshotRequest{
 		VMID:             vmID,
