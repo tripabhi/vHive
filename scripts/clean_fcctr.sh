@@ -25,8 +25,8 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 echo Killing firecracker agents and VMs
-sudo pkill -f firec
-sudo pkill -f containerd
+sudo pkill -9 firec
+sudo pkill -9 containerd
 
 echo Resetting nftables
 sudo nft flush table ip filter
@@ -68,12 +68,14 @@ fi
 
 echo Cleaning /var/lib/firecracker-containerd/*
 for d in containerd shim-base snapshotter; do sudo rm -rf /var/lib/firecracker-containerd/$d; done
+# for d in io.containerd.metadata.v1.bolt io.containerd.runtime.v1.linux io.containerd.runtime.v2.task io.containerd.service.v1.fc-control io.containerd.snapshotter.v1.overlayfs tmpmounts; do sudo rm -rf /var/lib/firecracker-containerd/containerd/$d; done
+# sleep 20
 
 echo Cleaning /run/firecracker-containerd/*
 sudo rm -rf /run/firecracker-containerd/containerd.sock.ttrpc \
     /run/firecracker-containerd/io.containerd.runtime.v1.linux \
     /run/firecracker-containerd/io.containerd.runtime.v2.task \
-    /run/containerd/s
+sudo rm -rf /run/containerd/s
 
 echo Cleaning CNI state, e.g., allocated addresses
 sudo rm /var/lib/cni/networks/fcnet*/last_reserved_ip.0 || echo clean already

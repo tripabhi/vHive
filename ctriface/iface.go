@@ -68,10 +68,13 @@ type StartVMResponse struct {
 	FCPid string
 }
 
+// ghcr.io/ease-lab/helloworld:var_workload
+// ghcr.io/ease-lab/pyaes:var_workload
+// docker.io/vhiveease/video-analytics-recog:latest
+// docker.io/lyuze/helloworld:0.2
 const (
-	testImageName = "ghcr.io/ease-lab/helloworld:var_workload"
-	testImageNameVictim = "docker.io/vhiveease/video-analytics-recog:latest"
-	// testImageNameVictim = "ghcr.io/ease-lab/pyaes:var_workload"
+	testImageName = "docker.io/lyuze/helloworld:0.2"
+	testImageNameVictim = "ghcr.io/ease-lab/helloworld:var_workload"
 )
 
 // StartVM Boots a VM if it does not exist
@@ -278,6 +281,7 @@ func (o *Orchestrator) StartVMModified(ctx context.Context, vmID, imageName stri
 
 	ctx = namespaces.WithNamespace(ctx, namespaceName)
 	// tStart = time.Now()
+	// log.Info("image name: ", imageName)
 	if vm.Image, err = o.getImage(ctx, imageName); err != nil {
 		return nil, nil, errors.Wrapf(err, "Failed to get/pull image")
 	}
@@ -295,6 +299,19 @@ func (o *Orchestrator) StartVMModified(ctx context.Context, vmID, imageName stri
 	}
 	FCPid := resp.GetFirecrackerPID()
 	response = &StartVMResponse{GuestIP: vm.Ni.PrimaryAddress, FCPid: FCPid}
+	//set victim CPU affinity
+	// if isVictim {
+	// log.Info("setting ", FCPid, " to CPU ", vmID)
+	{
+		TaskSetCmd := fmt.Sprintf("taskset -cp %s %s", vmID, FCPid)
+		TaskSetCmdExec := exec.Command("sudo", "/bin/bash", "-c", TaskSetCmd)
+		stdout, err := TaskSetCmdExec.Output()
+		if err != nil {
+			fmt.Println(err.Error())
+			return
+		}
+		fmt.Println(string(stdout))
+	}
 	// get disk stats after run
 	// readInSectorAfterRun, writeInSectorAfterRun := getDiskStats()
 	// log.Info("Read in MB: ", (readInSectorAfterRun - readInSectorBeforeRun)*512/1024/1024)
@@ -308,7 +325,16 @@ func (o *Orchestrator) StartVMModified(ctx context.Context, vmID, imageName stri
 		}
 	}()
 
-	// log.Info("NewContainer for vmid: ", vmID)
+	log.Info("NewContainer for vmid: ", vmID)
+	// {
+	// 	ExecCmd := exec.Command("sudo", "/bin/bash", "-c", fmt.Sprintf("lsof -p %s", FCPid))
+	// 	stdout, err := ExecCmd.Output()
+	// 	if err != nil {
+	// 		fmt.Println(err.Error())
+	// 		return
+	// 	}
+	// 	fmt.Println(string(stdout))
+	// }
 	tStart = time.Now()
 	container, err := o.client.NewContainer(
 		ctx,
@@ -330,7 +356,15 @@ func (o *Orchestrator) StartVMModified(ctx context.Context, vmID, imageName stri
 	// readInSectorAfterRun, writeInSectorAfterRun = getDiskStats()
 	// log.Info("Read in MB: ", (readInSectorAfterRun - readInSectorBeforeRun)*512/1024/1024)
 	// log.Info("Write in MB: ", (writeInSectorAfterRun - writeInSectorBeforeRun)*512/1024/1024)
-
+	// {
+	// 	ExecCmd := exec.Command("sudo", "/bin/bash", "-c", fmt.Sprintf("lsof -p %s", FCPid))
+	// 	stdout, err := ExecCmd.Output()
+	// 	if err != nil {
+	// 		fmt.Println(err.Error())
+	// 		return
+	// 	}
+	// 	fmt.Println(string(stdout))
+	// }
 	defer func() {
 		if retErr != nil {
 			if err := container.Delete(ctx, containerd.WithSnapshotCleanup); err != nil {
@@ -389,7 +423,7 @@ func (o *Orchestrator) StartVMModified(ctx context.Context, vmID, imageName stri
 	startVMMetric.MetricMap[metrics.TaskStart] = metrics.ToUS(time.Since(tStart))
 
 	// sleep for a lil bit to see the logs
-	time.Sleep(3 * time.Second)
+	time.Sleep(4 * time.Second)
 
 	// kill the process and get the exit status
 	// log.Info("killing task...")
@@ -731,7 +765,7 @@ func (o *Orchestrator) CreateSnapshot(ctx context.Context, vmID string) error {
 	clientDeadline := time.Now().Add(10000 * time.Second)
 	ctxFwd, cancel := context.WithDeadline(ctx, clientDeadline)
 	defer cancel()
-	// log.Info("snapshotPath: ", o.getMemoryFile(vmID))
+	log.Info("CSS for: ", vmID)
 
 	req := &proto.CreateSnapshotRequest{
 		VMID:             vmID,

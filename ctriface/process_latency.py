@@ -4,7 +4,7 @@ import re
 import pandas as pd
 import csv
 
-resultDir = "./verify"
+resultDir = "./large_intf_small_victim"
 os.chdir(resultDir+"/")
 all_rows = []
 col_name = ["ExpEnv", "FcCreateVM", "FcCreateVMStd", "FcCreateVMMin", "FcCreateVMMax", \

@@ -1,0 +1,6 @@
+testImageName = "docker.io/vhiveease/video-analytics-recog:latest"
+	testImageNameVictim = "ghcr.io/ease-lab/helloworld:var_workload"
+    intf VMsize:1024
+    victim vmsize: 256
+
+page cache remains

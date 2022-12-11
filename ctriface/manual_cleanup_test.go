@@ -416,13 +416,18 @@ func TestSequentialCSS(t *testing.T) {
 	log.Info("pulling intf image now......")
 	_, err := orch.getImage(ctx, testImageName)
 	require.NoError(t, err, "Failed to pull image "+testImageName)
-	ImageName := testImageName
-	if !*sameCtImg {
-		ImageName = testImageNameVictim
-		log.Info("pulling victim image now......")
-		_, err := orch.getImage(ctx, testImageNameVictim)
-		require.NoError(t, err, "Failed to pull image "+testImageNameVictim)
-	}
+
+	log.Info("pulling victim image now......")
+	_, err = orch.getImage(ctx, testImageNameVictim)
+	require.NoError(t, err, "Failed to pull image "+testImageNameVictim)
+	// time.Sleep(20*time.Second)
+	// ImageName := testImageName
+	// if !*sameCtImg {
+	// 	ImageName = testImageNameVictim
+	// 	log.Info("pulling victim image now......")
+	// 	_, err := orch.getImage(ctx, testImageNameVictim)
+	// 	require.NoError(t, err, "Failed to pull image "+testImageNameVictim)
+	// }
 	
 	// log.Info("pull complete, starting Victim VM ...")
 
@@ -445,6 +450,14 @@ func TestSequentialCSS(t *testing.T) {
 			response, _, err := orch.StartVMModified(ctx, vmID, testImageName, vmSize, 1)
 			// log.Info("CSS FcPid: ", response.FCPid)
 			CreateSSInstancePid[i] = response.FCPid
+			// log.Info("Intf Pid: ", CreateSSInstancePid[i])
+			// setToIdelCmd := exec.Command("sudo", "/bin/bash", "-c", fmt.Sprintf("ionice -c 3 -p %s", CreateSSInstancePid[i]))
+			// stdout, err := setToIdelCmd.Output()
+			// if err != nil {
+			// 	fmt.Println(err.Error())
+			// 	return
+			// }
+			// fmt.Println(string(stdout))
 			// serveMetrics[i].MetricMap[metrics.StartVM] = metrics.ToUS(time.Since(tStart))
 			// if metr != nil {
 			// 	for k, v := range metr.MetricMap {
@@ -474,6 +487,19 @@ func TestSequentialCSS(t *testing.T) {
 		vmGroup.Wait()
 	}
 
+	//set cpu affinity for victim
+	// for i := 0; i < *interferNum; i++ {
+	// 	log.Info("setting ", CreateSSInstancePid[i], " to CPU ", i)
+	// 	TaskSetCmd := fmt.Sprintf("taskset -cp %d %s", i, CreateSSInstancePid[i])
+	// 	TaskSetCmdExec := exec.Command("sudo", "/bin/bash", "-c", TaskSetCmd)
+	// 	stdout, err := TaskSetCmdExec.Output()
+	// 	if err != nil {
+	// 		fmt.Println(err.Error())
+	// 		return
+	// 	}
+	// 	fmt.Println(string(stdout))
+	// }
+
 	// throttle interferon writeBW
 	if (*writeBW == 99999) {
 		log.Info("resetting to no throttling...")
@@ -497,6 +523,7 @@ func TestSequentialCSS(t *testing.T) {
 			fmt.Println(string(stdout))
 		}
 	}
+
 
 	log.Info("Creating Seq Intf Snapshots ...")
 	// quit := make(chan bool)
@@ -524,14 +551,31 @@ func TestSequentialCSS(t *testing.T) {
 		}
 		intfGroup.Wait()
 		log.Info("All Create Snapshot threads have finished or exited, syncing...")
-		exec.Command("sudo", "/bin/bash", "-c", "sync").Start()
+		// exec.Command("sudo", "/bin/bash", "-c", "sync").Start()
+		dropPageCache()
+		time.Sleep(10*time.Second)
 	}
 
-	// wait for a few second to make sure intf doing disk write
-	// time.Sleep(4*time.Second)
+	{
+		// log.Info("adding files to page cache...")
+		// EvictExec := exec.Command("sudo", "/bin/bash", "-c", "vmtouch -t /run/containerd/s/*")
+		// stdout, err := EvictExec.Output()
+		// if err != nil {
+		// 	fmt.Println(err.Error())
+		// 	return
+		// }
+		// fmt.Println(string(stdout))
+	// 	EvictExec = exec.Command("/bin/bash", "-c", "vmtouch -t /var/lib/firecracker-containerd/runtime/default-rootfs.img")
+	// 	stdout, err = EvictExec.Output()
+	// 	if err != nil {
+	// 		fmt.Println(err.Error())
+	// 		return
+	// 	}
+	// 	fmt.Println(string(stdout))
+	}
 	
-	
-	// start victim
+	// dropPageCache()
+
 	log.Info("start victim VMs...")
 	{
 		var victimGroup sync.WaitGroup
@@ -542,7 +586,7 @@ func TestSequentialCSS(t *testing.T) {
 				victimID := fmt.Sprintf("%d", i+vmIDBase)
 				
 				// var tStart = time.Now()
-				response, metr, err := orch.StartVMModified(ctx, victimID, ImageName, 256, 1)
+				response, metr, err := orch.StartVMModified(ctx, victimID, testImageNameVictim, 256, 1)
 				// serveMetrics[x].MetricMap[metrics.StartVM] = metrics.ToUS(time.Since(tStart))
 				log.Info("Victim FCPid: ", response.FCPid)
 				if metr != nil {
@@ -575,7 +619,7 @@ func TestSequentialCSS(t *testing.T) {
 		// if *sameCtImg {
 		// 	diff_or_same = "same"
 		// }
-		filePath := fmt.Sprintf("./verify/%d_%d_%d.csv" , *parallelNum, *interferNum, *writeBW)
+		filePath := fmt.Sprintf("./1208_readInVic/%d_%d_%d_drop.csv" , *parallelNum, *interferNum, *writeBW)
 		// if !*sameCtImg {
 		// 	filePath = fmt.Sprintf("./test_diffCSSNC/%d_%d_%d.csv" , *parallelNum, *interferNum, *writeBW)
 		// }
@@ -654,7 +698,7 @@ func TestOnlyCSS(t *testing.T) {
 				defer vmGroup.Done()
 				vmID := fmt.Sprintf("%d", i+vmIDBase)
 				// var tStart = time.Now()
-				response, _, err := orch.StartVMModified(ctx, vmID, testImageName, vmSize, 1)
+				response, _, err := orch.StartVMModified(ctx, vmID, testImageName, 256, 1)
 				// log.Info("CSS FcPid: ", response.FCPid)
 				CreateSSInstancePid[i] = response.FCPid
 				// serveMetrics[i].MetricMap[metrics.StartVM] = metrics.ToUS(time.Since(tStart))
@@ -755,11 +799,13 @@ func TestOnlyCSS(t *testing.T) {
 				log.Info("CSS finish for vmID: ", vmID)
 			}(i)
 		}
+		intfGroup.Wait()
+		exec.Command("sudo", "/bin/bash", "-c", "sync").Start()
 	}
 	
-	log.Info("All Create Snapshot threads have finished or exited. Syncing...")
-	syncCmd := "sync"
-	exec.Command("sudo", "/bin/bash", "-c", syncCmd).Start()
+	// log.Info("All Create Snapshot threads have finished or exited. Syncing...")
+	// syncCmd := "sync"
+	// exec.Command("/bin/bash", "-c", "sync").Start()
 	// log.Info("sleep for a lil to wait for flushing")
 
 	getIOTimeGroup.Wait()
